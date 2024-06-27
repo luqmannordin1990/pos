@@ -1,0 +1,52 @@
+<?php
+
+namespace App\Providers;
+
+use Livewire\Livewire;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Route;
+use App\Policies\ActivityLoggerPolicy;
+use Illuminate\Support\ServiceProvider;
+use Spatie\Activitylog\Models\Activity;
+use Filament\Support\Facades\FilamentView;
+use Filament\Http\Responses\Auth\Contracts\LoginResponse;
+
+class AppServiceProvider extends ServiceProvider
+{
+
+    /**
+     * Register any application services.
+     */
+    public function register(): void
+    {
+        $this->app->singleton(
+            LoginResponse::class,
+            \App\Http\Responses\Auth\LoginResponse::class
+        );
+        //
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::BODY_END,
+            fn () => view('customFooter'),
+        );
+    }
+
+    /**
+     * Bootstrap any application services.
+     */
+    public function boot(): void
+    {
+        //
+        if($this->app->environment('production')) {
+            // URL::forceScheme('https');
+            $this->app['request']->server->set('HTTPS', true);
+        }
+
+        Livewire::setScriptRoute(function ($handle) {
+            return Route::get('/livewire/livewire.js', $handle)->middleware('web');
+        });
+        Livewire::setUpdateRoute(function ($handle) {
+            return Route::post('/livewire/update', $handle)->middleware('web');
+        });
+    }
+}
