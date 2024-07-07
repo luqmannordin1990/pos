@@ -131,7 +131,7 @@ class Login extends BaseAuth
                 'name' => $finduserlppsa->name,
                 'username' => $finduserlppsa->username,
                 'email' => $finduserlppsa->email,
-                'password' => bcrypt('U53r_4cc0un7'),
+                'password' => $data['password'],
             ]);
             Auth::login($user);
         } else {
