@@ -3,8 +3,11 @@
 namespace App\Providers;
 
 use Livewire\Livewire;
+use App\Policies\UserPolicy;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use App\Policies\ActivityLoggerPolicy;
 use Illuminate\Support\ServiceProvider;
@@ -27,8 +30,10 @@ class AppServiceProvider extends ServiceProvider
         //
         FilamentView::registerRenderHook(
             PanelsRenderHook::BODY_END,
-            fn () => view('customFooter'),
+            // fn () => view('customFooter'),
+            fn () => Blade::render('@livewire(\'footer\')')
         );
+
     }
 
     /**
@@ -46,7 +51,18 @@ class AppServiceProvider extends ServiceProvider
             return Route::get('/livewire/livewire.js', $handle)->middleware('web');
         });
         Livewire::setUpdateRoute(function ($handle) {
-            return Route::post('/livewire/update', $handle)->middleware('web');
+            return Route::post('/livewire/update', $handle)->middleware('web')->name('custom-update');
+        });
+
+
+        Gate::guessPolicyNamesUsing(function (string $modelClass) {
+            // Return the name of the policy class for the given model...
+       
+            if($modelClass == 'Spatie\Activitylog\Models\Activity'){
+                return ActivityLoggerPolicy::class;
+            }else if($modelClass == 'App\Models\User'){
+                return UserPolicy::class;
+            }
         });
     }
 }

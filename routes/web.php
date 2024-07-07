@@ -18,9 +18,13 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/login', function () {
+    return redirect(route('filament.admin.auth.login'));
+})->name('login');
+
 Route::get('/logout', function () {
-    Filament::auth()->logout();
+    auth()->logout();
     request()->session()->invalidate();
     request()->session()->regenerateToken();
-    return redirect(Filament::getUrl()) ;
+    return redirect(url()->previous()) ;
 })->name('logout');

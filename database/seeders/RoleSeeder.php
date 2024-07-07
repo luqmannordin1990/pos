@@ -19,22 +19,22 @@ class RoleSeeder extends Seeder
         //
  
 
-        Permission::create(['name' => 'view-any']);
+        Permission::create(['name' => 'viewany']);
         
         $roleAdmin = Role::create(['name' => 'admin','guard_name' => 'web']);
-        $roleAdmin->givePermissionTo(['view-any']);
+        $roleAdmin->givePermissionTo(['viewany']);
 
-        // $roleAdmin = Role::create(['name' => 'staff','guard_name' => 'web']);
-        // $roleAdmin->givePermissionTo(['view-any']);
+        $roleAdmin = Role::create(['name' => 'staff','guard_name' => 'web']);
+        $roleAdmin->givePermissionTo(['viewany']);
 
         // $roleAdmin = Role::create(['name' => 'ccd','guard_name' => 'web']);
-        // $roleAdmin->givePermissionTo(['view-any']);
+        // $roleAdmin->givePermissionTo(['viewany']);
 
         // $roleAdmin = Role::create(['name' => 'ceo','guard_name' => 'web']);
-        // $roleAdmin->givePermissionTo(['view-any']);
+        // $roleAdmin->givePermissionTo(['viewany']);
 
         // $roleExternal = Role::create(['name' => 'external','guard_name' => 'web']);
-        // $roleExternal->givePermissionTo(['view-any']);
+        // $roleExternal->givePermissionTo(['viewany']);
        
 
         

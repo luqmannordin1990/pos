@@ -21,10 +21,19 @@ class DatabaseSeeder extends Seeder
 
         $user = User::factory()->create([
             'name' => 'admin',
+            'username' => 'admin',
             'email' => 'admin@test.com',
             'password' => Hash::make('U53r_4cc0un7'),
         ]);
         $user->assignRole(Role::where('name', 'admin')->first());
+
+        $user = User::factory()->create([
+            'name' => 'staff',
+            'username' => 'staff',
+            'email' => 'staff@test.com',
+            'password' => Hash::make('U53r_4cc0un7'),
+        ]);
+        $user->assignRole(Role::where('name', 'staff')->first());
 
         
         // \App\Models\User::factory(10)->create();

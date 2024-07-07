@@ -25,6 +25,7 @@ class AdminPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
+            ->default()
             ->id('admin')
             ->path('admin')
             ->login(Login::class)
@@ -32,22 +33,13 @@ class AdminPanelProvider extends PanelProvider
             ->spa()
             ->sidebarCollapsibleOnDesktop()
             ->brandLogo(asset('assets/logo.png'))
-            ->brandLogoHeight('4rem')
+            ->brandLogoHeight('3rem')
             ->favicon(asset('assets/logo.png'))
             ->colors([
                 'primary' => Color::Amber,
             ])
             ->viteTheme('resources/css/filament/admin/theme.css')
-            ->navigationItems([
-                NavigationItem::make('Logout')
-                    ->label(__('Logout'))
-                    ->url(fn () => route('logout'))
-                    // ->isActiveWhen(fn (): bool => strpos(url()->current(), DocConvertResource::getUrl('index')) !== false)
-                    ->icon('heroicon-o-arrow-uturn-left')
-                    // ->group('Billing')
-                    ->sort(10)
-                    // ->badge(fn () => Quotation::whereBelongsTo(Filament::getTenant(), 'teams')->where('quote_status', 'new')->count()),
-            ])
+            ->navigationItems([])
             ->resources([
                 config('filament-logger.activity_resource')
             ])

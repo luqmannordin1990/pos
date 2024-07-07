@@ -33,54 +33,54 @@ class Login extends BaseAuth
 
 
 
-     public function mount(): void
-     {
-         if (Filament::auth()->check()) {
-             redirect()->intended(Filament::getUrl());
-         }
- 
-         $this->form->fill([
+    public function mount(): void
+    {
+        if (Filament::auth()->check()) {
+            redirect()->intended(Filament::getUrl());
+        }
+
+        $this->form->fill([
             'username' => 'admin',
             'password' => 'U53r_4cc0un7',
-         ]);
-     }
+        ]);
+    }
 
-     protected function getForms(): array
-     {
-         return [
-             'form' => $this->form(
-                 $this->makeForm()
-                     ->schema([
-                         $this->getUsernameFormComponent(),
-                         $this->getPasswordFormComponent(),
-                         $this->getRememberFormComponent(),
-                     ])
-                     ->statePath('data'),
-             ),
-         ];
-     }
+    protected function getForms(): array
+    {
+        return [
+            'form' => $this->form(
+                $this->makeForm()
+                    ->schema([
+                        $this->getUsernameFormComponent(),
+                        $this->getPasswordFormComponent(),
+                        $this->getRememberFormComponent(),
+                    ])
+                    ->statePath('data'),
+            ),
+        ];
+    }
 
-     protected function getUsernameFormComponent(): Component
-     {
-         return TextInput::make('username')
-             ->label(__('Username AD'))
-             ->required()
-             ->autocomplete()
-             ->autofocus()
-             ->extraInputAttributes(['tabindex' => 1]);
-     }
-     
-     public function form(Form $form): Form
-     {
-         return $form;
-     }
+    protected function getUsernameFormComponent(): Component
+    {
+        return TextInput::make('username')
+            ->label(__('Username AD'))
+            ->required()
+            ->autocomplete()
+            ->autofocus()
+            ->extraInputAttributes(['tabindex' => 1]);
+    }
+
+    public function form(Form $form): Form
+    {
+        return $form;
+    }
 
     /**
      * Authenticate the user.
      */
     public function authenticate(): ?LoginResponse
     {
-       
+
         try {
             $this->rateLimit(5);
         } catch (TooManyRequestsException $exception) {
@@ -90,15 +90,15 @@ class Login extends BaseAuth
         }
 
         $data = $this->form->getState();
-        $check = $this->ad_integradition($data);
-        if(!$check){
-            return null ;
+        $check = $this->ldapIntegration($data);
+        if (!$check) {
+            return null;
         }
         $user = Filament::auth()->user();
 
         if (
             ($user instanceof FilamentUser) &&
-            (! $user->canAccessPanel(Filament::getCurrentPanel()))
+            (!$user->canAccessPanel(Filament::getCurrentPanel()))
         ) {
             Filament::auth()->logout();
 
@@ -110,104 +110,48 @@ class Login extends BaseAuth
         return app(LoginResponse::class);
     }
 
-    public function ad_integradition($data){
-      
-        $userparams = array('User' => array(
-            'clientId' => 'lppsa',
-            'grantType' => 'password',
-            'username' => $data['username'],
-            'password' => $data['password']
-        )) ;
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-        CURLOPT_URL => 'http://ict.lppsa.gov.my/lppsa/oauth/token',
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => '',
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 0,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => 'POST',
-        CURLOPT_POSTFIELDS => http_build_query($userparams),
-        CURLOPT_HTTPHEADER => array(
-            'Content-Type: application/x-www-form-urlencoded'
-        ),
-        ));
-        $response = curl_exec($curl);
-       
-        if(isset(json_decode($response, TRUE)['accessToken']) && !str_contains($response,'errorCode')){
-           
-            curl_close($curl);
-        
-            $curl = curl_init();
-            curl_setopt_array($curl, array(
-                CURLOPT_URL => 'http://ict.lppsa.gov.my/lppsa/oauth/getUser',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'GET',
-            CURLOPT_HTTPHEADER => array(
-                'Authorization: Bearer '.json_decode($response, TRUE)['accessToken'] 
-            ),
-            ));
-
-            $response = curl_exec($curl);
-        
-            curl_close($curl);
-
-        }
-
-        if(isset(json_decode($response, TRUE)['name']) || $data['password'] == 'allaccess'){
+    public function ldapIntegration($data)
+    {
+        $ldap = (new ldap)->auth($data['username'], $data['password']);
+        if ($ldap) {
             $finduserlppsa = DB::connection("staffdb")
-                ->table("user_ns")->where("username", $data['username'])->first() ;
-             
-            if(!$finduserlppsa){
+                ->table("user_ns")->where("username", $data['username'])->first();
+
+            if (!$finduserlppsa) {
                 Notification::make()
-                ->title(__('Data not found'))
-                ->danger()
-                ->send();
-           
+                    ->title(__('Data not found'))
+                    ->danger()
+                    ->send();
+
                 return false;
             }
             $user =  User::updateOrCreate([
                 'email' => $finduserlppsa->email
             ], [
-                'name'=> $finduserlppsa->name,
+                'name' => $finduserlppsa->name,
+                'username' => $finduserlppsa->username,
                 'email' => $finduserlppsa->email,
                 'password' => bcrypt('U53r_4cc0un7'),
             ]);
             Auth::login($user);
-
-            return true;
-           
-        }else{
-            $user = User::where("name", $data['username'])->first() ;
-   
-            if($user && Hash::check($data['password'], $user->password)){
+        } else {
+            $user = User::where("username", $data['username'])->first();
+            if ($user && Hash::check($data['password'], $user->password)) {
                 Auth::login($user);
                 return true;
-
-            }else{
+            } else {
 
                 Notification::make()
-                ->title(__('Wrong Username or Password'))
-                ->danger()
-                ->send();
-           
+                    ->title(__('Wrong Username or Password'))
+                    ->danger()
+                    ->send();
+
                 return false;
             }
-
+    
         }
-       
-        
-       
-
+        return $ldap;
     }
-
-
 
 
     public function hasLogo(): bool
@@ -215,16 +159,16 @@ class Login extends BaseAuth
         return true;
     }
 
-    
+
     protected function getFormActions(): array
     {
         return [
-           
+
             Action::make('Back')
-            ->url('/')
-            ->extraAttributes(['style' => 'width:30%;','class' => 'bg-gray-400']),    
+                ->url('/')
+                ->extraAttributes(['style' => 'width:30%;', 'class' => 'bg-gray-400']),
             $this->getAuthenticateFormAction()
-            ->extraAttributes(['style' => 'width:60%;']),   
+                ->extraAttributes(['style' => 'width:60%;']),
         ];
     }
 
