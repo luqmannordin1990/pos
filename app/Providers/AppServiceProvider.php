@@ -55,14 +55,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
 
-        Gate::guessPolicyNamesUsing(function (string $modelClass) {
-            // Return the name of the policy class for the given model...
+        // Gate::policy(Activity::class, ActivityLoggerPolicy::class);
        
-            if($modelClass == 'Spatie\Activitylog\Models\Activity'){
-                return ActivityLoggerPolicy::class;
-            }else if($modelClass == 'App\Models\User'){
-                return UserPolicy::class;
-            }
-        });
     }
 }

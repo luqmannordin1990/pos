@@ -1,7 +1,9 @@
 <?php
 
+use Illuminate\Http\Request;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Route;
+use Filament\Http\Responses\Auth\Contracts\LogoutResponse;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,9 +24,9 @@ Route::get('/login', function () {
     return redirect(route('filament.admin.auth.login'));
 })->name('login');
 
-Route::get('/logout', function () {
-    auth()->logout();
-    request()->session()->invalidate();
-    request()->session()->regenerateToken();
-    return redirect(url()->previous()) ;
+Route::get('/logout', function (Request $request) {
+    Filament::auth()->logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    return app(LogoutResponse::class);
 })->name('logout');
