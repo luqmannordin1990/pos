@@ -7,7 +7,11 @@ use Filament\Panel;
 use Filament\Widgets;
 use Filament\PanelProvider;
 use App\Filament\Auth\Login;
+use Filament\Support\Assets\Js;
+use Filament\Support\Assets\Css;
 use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Support\Facades\Blade;
 use Filament\Navigation\NavigationItem;
 use Filament\Http\Middleware\Authenticate;
 use Illuminate\Session\Middleware\StartSession;
@@ -39,6 +43,16 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::Amber,
             ])
             ->viteTheme('resources/css/filament/admin/theme.css')
+            ->assets([
+                Css::make('custom-stylesheet', asset('css/custom.css')),
+                Js::make('custom-script', asset('js/custom.js')),
+            ])
+            ->renderHook(
+                PanelsRenderHook::AUTH_LOGIN_FORM_BEFORE,
+                fn (): string => Blade::render('
+                   <div class="flex justify-center font-bold">{{ config("app.name") }}</div>
+                ')
+            )
             ->navigationItems([])
             ->resources([
                 config('filament-logger.activity_resource')

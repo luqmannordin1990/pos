@@ -31,6 +31,12 @@ class Login extends BaseAuth
      * Get the form for the resource.
      */
 
+    protected array $extraBodyAttributes = ['class' => 'login-page'];
+
+    public function getHeading(): string
+    {
+        return __('Sign In');
+    }
 
 
     public function mount(): void
@@ -148,7 +154,6 @@ class Login extends BaseAuth
 
                 return false;
             }
-    
         }
         return $ldap;
     }
