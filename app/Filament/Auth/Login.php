@@ -171,7 +171,7 @@ class Login extends BaseAuth
 
             Action::make('Back')
                 ->url('/')
-                ->extraAttributes(['style' => 'width:30%;', 'class' => 'bg-gray-400']),
+                ->extraAttributes(['wire:navigate'=> 'true','style' => 'width:30%;', 'class' => 'bg-gray-400']),
             $this->getAuthenticateFormAction()
                 ->extraAttributes(['style' => 'width:60%;']),
         ];
