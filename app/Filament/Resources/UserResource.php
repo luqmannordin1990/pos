@@ -113,6 +113,7 @@ class UserResource extends Resource
                         ->relationship(name: 'roles', titleAttribute: 'name')
                         ->saveRelationshipsUsing(function (Model $record, $state) {
                             $newRole = Role::whereIn('id', $state)->get();
+                            $record->syncRoles([]);
                             $record->assignRole($newRole);
                         })
                         ->columns(2),
