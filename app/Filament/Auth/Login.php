@@ -30,6 +30,7 @@ class Login extends BaseAuth
     /**
      * Get the form for the resource.
      */
+    protected static string $layout = 'filament-panels::components.layout.base';
 
     protected array $extraBodyAttributes = ['class' => 'login-page'];
 
