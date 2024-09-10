@@ -9,10 +9,13 @@ use Filament\PanelProvider;
 use App\Filament\Auth\Login;
 use Filament\Support\Assets\Js;
 use Filament\Support\Assets\Css;
+use App\Filament\Admin\Themes\Luq;
 use Filament\Support\Colors\Color;
 use Filament\View\PanelsRenderHook;
+use App\Filament\Admin\Themes\Lppsa;
 use Illuminate\Support\Facades\Blade;
 use Filament\Navigation\NavigationItem;
+use Filament\Navigation\NavigationGroup;
 use Filament\Http\Middleware\Authenticate;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -54,6 +57,11 @@ class AdminPanelProvider extends PanelProvider
                 ')
             )
             ->navigationItems([])
+            ->navigationGroups([
+                NavigationGroup::make()
+                     ->label('Maintenance')
+                     ->icon('heroicon-o-wrench'),
+            ])
             ->resources([
                 config('filament-logger.activity_resource')
             ])
@@ -77,9 +85,15 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                \Hasnayeen\Themes\Http\Middleware\SetTheme::class
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->plugin(
+                \Hasnayeen\Themes\ThemesPlugin::make()
+                ->registerTheme([Lppsa::getName() => Lppsa::class])
+                    
+            );
     }
 }
