@@ -28,6 +28,7 @@ class User extends Authenticatable implements FilamentUser
         'username',
         'email',
         'password',
+        'ban',
     ];
 
     /**
@@ -48,6 +49,7 @@ class User extends Authenticatable implements FilamentUser
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'ban' => 'boolean',
     ];
 
     public function canAccessPanel(Panel $panel): bool

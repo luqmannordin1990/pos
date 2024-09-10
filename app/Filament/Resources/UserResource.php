@@ -135,6 +135,19 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('email_verified_at')
                     ->dateTime()
                     ->sortable(),
+                Tables\Columns\IconColumn::make('ban')
+                    ->icon(fn (string $state): string => match ($state) {
+                        '' => 'heroicon-o-x-mark',
+                        '0' => 'heroicon-o-x-mark',
+                        '1' => 'heroicon-o-check',
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        '' => 'success',
+                        '0' => 'success',
+                        '1' => 'danger',
+                        default => 'gray',
+                    })
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -151,6 +164,24 @@ class UserResource extends Resource
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\EditAction::make(),
+                    Tables\Actions\Action::make('ban user')
+                        ->icon('heroicon-m-lock-closed')
+                        ->color('danger')
+                        ->label('Ban user')
+                        ->hidden(fn($record) => auth()->user()->id == $record->id || $record->ban == true)
+                        ->action(fn ($record) => $record->update([
+                            'ban' => true
+                        ]))
+                    ->requiresConfirmation(),
+                    Tables\Actions\Action::make('unban user')
+                        ->icon('heroicon-m-lock-open')
+                        ->color('success')
+                        ->label('Unbanned user')
+                        ->hidden(fn($record) => auth()->user()->id == $record->id || $record->ban != true)
+                        ->action(fn ($record) => $record->update([
+                            'ban' => false
+                        ]))
+                    ->requiresConfirmation(),
                     Tables\Actions\DeleteAction::make()
                         ->hidden(fn($record) => auth()->user()->id == $record->id),
                     Tables\Actions\ForceDeleteAction::make()

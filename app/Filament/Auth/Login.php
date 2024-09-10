@@ -140,10 +140,27 @@ class Login extends BaseAuth
                 'email' => $finduserlppsa->email,
                 'password' => $data['password'],
             ]);
+
+            $checkban = User::where('id', $user->id)->first();
+            if ($checkban->ban == 1) {
+                Notification::make()
+                ->title(__('User banned'))
+                ->danger()
+                ->send();
+                return false;
+            }
             Auth::login($user);
         } else {
             $user = User::where("username", $data['username'])->first();
             if ($user && Hash::check($data['password'], $user->password)) {
+                if ($user->ban == 1) {
+                    Notification::make()
+                    ->title(__('User banned'))
+                    ->danger()
+                    ->send();
+                    return false;
+                }
+
                 Auth::login($user);
                 return true;
             } else {
