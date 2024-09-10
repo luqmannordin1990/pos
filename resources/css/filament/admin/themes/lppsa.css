@@ -1,6 +1,6 @@
 @import '../../../../../vendor/filament/filament/resources/css/theme.css';
 
-@config './tailwind.Lppsa.config.js';
+@config './tailwind.lppsa.config.js';
 
 html.fi.min-h-screen body nav.fi-sidebar-nav{
     background-image: url("../../../../../public/assets/bg.png") ;
