@@ -3,13 +3,13 @@
  
         @assets
         <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.10.1/lottie.min.js"></script>
-    
+       
         @endassets
-    
-    
+       
+       
         <div id="lottie-animation" class="hidden sm:block" style="width: 300px; height: 300px;position: absolute;left:13%;top:2%;"></div>
-    
-    
+       
+       
         @script
         <script>
             let baseurl = "{{ url('/') }}";
@@ -23,28 +23,29 @@
         });
         </script>
         @endscript
-    
-    
+       
+       
         @if (filament()->hasRegistration())
             <x-slot name="subheading">
                 {{ __('filament-panels::pages/auth/login.actions.register.before') }}
-    
+       
                 {{ $this->registerAction }}
             </x-slot>
         @endif
-    
+       
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::AUTH_LOGIN_FORM_BEFORE, scopes: $this->getRenderHookScopes()) }}
-    
+       
         <x-filament-panels::form id="form" wire:submit="authenticate">
             {{ $this->form }}
-    
+       
             <x-filament-panels::form.actions
                 :actions="$this->getCachedFormActions()"
                 :full-width="$this->hasFullWidthFormActions()"
             />
         </x-filament-panels::form>
-    
+       
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::AUTH_LOGIN_FORM_AFTER, scopes: $this->getRenderHookScopes()) }}
-
-</div>
-{{-- </x-filament-panels::page.simple> --}}
+       
+       </div>
+       {{-- </x-filament-panels::page.simple> --}}
+       
