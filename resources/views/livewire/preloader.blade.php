@@ -54,29 +54,6 @@
 }
 
     </style>
-
-    <script>
-
-    window.addEventListener('livewire:init', async () => {
-        Livewire.on('preloader', ({ postId }) => {
-               setTimeout(() =>{
-                   document.querySelector('.preloader').style.display = 'none';
-               }, 500)
-           });
-    
-       document.addEventListener('livewire:navigate', (event) => {
-           document.querySelector('.preloader').style.display = 'block';
-       }) 
-       document.addEventListener('livewire:navigated', () => {
-           setTimeout(() =>{
-                   document.querySelector('.preloader').style.display = 'none';
-               }, 500)
-       })
-    
-    });
-    
-          
-        </script>
     @endassets
    
         <div class="preloader bg-gray-500/50 absolute inset-0 z-50">
@@ -85,4 +62,31 @@
                 <img src="{{ url('assets/loading.gif') }}" alt="">
             </div>
         </div>
+
+
+        @script
+        <script data-navigate-once>
+
+      
+              Livewire.on('preloader', ({ postId }) => {
+                     setTimeout(() =>{
+                         document.querySelector('.preloader').style.display = 'none';
+                     }, 500)
+                 });
+          
+             document.addEventListener('livewire:navigate', (event) => {
+                 document.querySelector('.preloader').style.display = 'block';
+             }) 
+             document.addEventListener('livewire:navigated', () => {
+                 setTimeout(() =>{
+                         document.querySelector('.preloader').style.display = 'none';
+                     }, 500)
+             })
+          
+       
+          
+                
+        </script>
+        @endscript
+
 </div>
