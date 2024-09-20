@@ -16,6 +16,7 @@ use App\Filament\Admin\Themes\Lppsa;
 use Illuminate\Support\Facades\Blade;
 use Filament\Navigation\NavigationItem;
 use Filament\Navigation\NavigationGroup;
+use App\Filament\Admin\Themes\Neumorphism;
 use Filament\Http\Middleware\Authenticate;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -92,7 +93,10 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->plugin(
                 \Hasnayeen\Themes\ThemesPlugin::make()
-                ->registerTheme([Lppsa::getName() => Lppsa::class])
+                ->registerTheme([
+                    Lppsa::getName() => Lppsa::class,
+                    Neumorphism::getName() => Neumorphism::class
+                    ])
                     
             );
     }

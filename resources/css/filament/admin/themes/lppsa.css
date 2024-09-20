@@ -2,22 +2,26 @@
 
 @config './tailwind.lppsa.config.js';
 
-html.fi.min-h-screen body nav.fi-sidebar-nav{
+
+.fi-sidebar-nav{
     background-image: url("../../../../../public/assets/bg.png") ;
     background-size: cover
+
+        
+    
 }
 
-html.fi.min-h-screen body.fi-body.fi-panel-admin li.fi-sidebar-group{
+.fi-sidebar-group{
     background:#ffffff8a;
     row-gap: 0;
     border-radius: 10px;
 }
-html.fi.min-h-screen body.fi-body.fi-panel-admin ul.fi-sidebar-nav-groups{
+ul.fi-sidebar-nav-groups{
     row-gap: 0.5rem;
    
 }
 
-html.fi.min-h-screen body.fi-body.fi-panel-admin nav.fi-sidebar-nav{
+nav.fi-sidebar-nav{
     /* background: linear-gradient(to bottom, blue, yellow);  */
     border-right: 5px solid rgb(255, 255, 255);
     border-image: linear-gradient(to bottom, rgb(255, 255, 255), blue ) 1;
@@ -27,34 +31,14 @@ html.fi.min-h-screen body.fi-body.fi-panel-admin nav.fi-sidebar-nav{
   
 }
 
-html.fi.min-h-screen body.fi-body.fi-panel-admin div.fi-topbar{
+div.fi-topbar{
     border-bottom: 5px solid rgb(255, 255, 255);
     border-image: linear-gradient(to right, rgb(255, 255, 255), yellow ) 1;
     border-width: 0 0 5px 0;
     /* animation: gradientAnimation 9s infinite;
     border-image-slice: 1; */
 }
-/* 
-@keyframes gradientAnimation {
-    0% {
-        border-image: linear-gradient(to right, blue, yellow) 1;
-    }
-    50% {
-        border-image: linear-gradient(to right, yellow, blue) 1;
-    }
-    100% {
-        border-image: linear-gradient(to right, blue, yellow) 1;
-    }
-    0% {
-        border-image: linear-gradient(to bottom, blue, yellow) 1;
-    }
-    50% {
-        border-image: linear-gradient(to bottom, yellow, blue) 1;
-    }
-    100% {
-        border-image: linear-gradient(to bottom, blue, yellow) 1;
-    }
-} */
+
 
 svg.fi-sidebar-item-icon, svg.fi-sidebar-group-icon{
     animation: rotate 2s infinite linear;
