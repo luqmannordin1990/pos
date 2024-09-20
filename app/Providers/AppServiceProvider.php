@@ -34,6 +34,12 @@ class AppServiceProvider extends ServiceProvider
             fn () => Blade::render('@livewire(\'footer\')')
         );
 
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::BODY_END,
+            // fn () => view('customFooter'),
+            fn () => Blade::render('@livewire(\'preloader\')')
+        );
+
     }
 
     /**
