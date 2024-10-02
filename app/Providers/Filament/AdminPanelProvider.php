@@ -9,6 +9,7 @@ use Filament\PanelProvider;
 use App\Filament\Auth\Login;
 use Filament\Support\Assets\Js;
 use Filament\Support\Assets\Css;
+use Filament\Navigation\MenuItem;
 use App\Filament\Admin\Themes\Luq;
 use Filament\Support\Colors\Color;
 use Filament\View\PanelsRenderHook;
@@ -37,12 +38,16 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login(Login::class)
-            ->profile()
+            // ->profile()
             ->spa()
             ->sidebarCollapsibleOnDesktop()
             ->brandLogo(asset('assets/logo.png'))
             ->brandLogoHeight('3rem')
             ->favicon(asset('assets/logo.png'))
+            // ->userMenuItems([
+            //     'profile' => MenuItem::make()->label('Edit profile')->visible(false),
+            //     // ...
+            // ])
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -91,13 +96,13 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->plugin(
+            ->plugins([
                 \Hasnayeen\Themes\ThemesPlugin::make()
                 ->registerTheme([
                     Lppsa::getName() => Lppsa::class,
                     Neumorphism::getName() => Neumorphism::class
                     ])
-                    
-            );
+
+                ]);
     }
 }

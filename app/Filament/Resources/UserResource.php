@@ -50,10 +50,11 @@ class UserResource extends Resource
                             ->suffixIcon('heroicon-m-magnifying-glass')
                             ->options(function (Get $get) {
                                 $finduserlppsa = DB::connection("staffdb")
-                                    ->table("user_ns")->get();
+                                    ->table("user_ns")
+                                    ->where('flag', 1)->get();
                                 $finduser = collect($finduserlppsa)->map(function ($item, $key) {
                                     $item->display = str_replace('LPPSA', "", $item->lppsa_no);
-                                    $item->store = $item->name . '###' . $item->email . '###' . $item->username;
+                                    $item->store = $item->name . '###' . $item->email . '###' . $item->username. '###' . $item->id;
                                     return $item;
                                 })->pluck('display', 'store')->toArray();
                                 return $finduser;
@@ -66,9 +67,11 @@ class UserResource extends Resource
                             ->afterStateUpdated(function (Set $set, Get $get, $state) {
                                 $finduser = explode('###', $get('search_staff'));
                                 if (isset($finduser[0])) {
+                                  
                                     $set('name', $finduser[0]);
                                     $set('email', $finduser[1]);
                                     $set('username', $finduser[2]);
+                                    $set('id', $finduser[3]);
                                 }
                             }),
 
@@ -76,7 +79,7 @@ class UserResource extends Resource
                     ->visible(fn($operation) =>  $operation == 'create'),
                 Forms\Components\Section::make()
                     ->schema([
-
+                        Forms\Components\Hidden::make('id'),
                         Forms\Components\TextInput::make('name')
                             ->required()
                             ->readonly(),
@@ -89,24 +92,24 @@ class UserResource extends Resource
                         Forms\Components\TextInput::make('username')
                             ->required()
                             ->readonly(),
-                        Forms\Components\DateTimePicker::make('email_verified_at')
-                            ->visible(false),
-                        Forms\Components\TextInput::make('password')
-                            ->dehydrateStateUsing(fn(string $state): string => Hash::make($state))
-                            ->dehydrated(fn(?string $state): bool => filled($state))
-                            ->required(fn(string $operation): bool => $operation === 'create')
-                            ->password()
-                            ->confirmed()
-                            ->revealable()
-                            ->maxLength(255)
-                            ->rule(Password::default())
-                            ->visible(true),
-                        Forms\Components\TextInput::make('password_confirmation')
-                            ->label('Confirm password')
-                            ->password()
-                            ->revealable()
-                            ->required(fn(string $operation): bool => $operation === 'create')
-                            ->visible(true),
+                        // Forms\Components\DateTimePicker::make('email_verified_at')
+                        //     ->visible(false),
+                        // Forms\Components\TextInput::make('password')
+                        //     ->dehydrateStateUsing(fn(string $state): string => Hash::make($state))
+                        //     ->dehydrated(fn(?string $state): bool => filled($state))
+                        //     ->required(fn(string $operation): bool => $operation === 'create')
+                        //     ->password()
+                        //     ->confirmed()
+                        //     ->revealable()
+                        //     ->maxLength(255)
+                        //     ->rule(Password::default())
+                        //     ->visible(true),
+                        // Forms\Components\TextInput::make('password_confirmation')
+                        //     ->label('Confirm password')
+                        //     ->password()
+                        //     ->revealable()
+                        //     ->required(fn(string $operation): bool => $operation === 'create')
+                        //     ->visible(true),
                         Forms\Components\CheckboxList::make('roles')
                             ->required()
                             ->relationship(name: 'roles', titleAttribute: 'name')
@@ -132,9 +135,9 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('roles.name')
                     ->badge()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('email_verified_at')
-                    ->dateTime()
-                    ->sortable(),
+                // Tables\Columns\TextColumn::make('email_verified_at')
+                //     ->dateTime()
+                //     ->sortable(),
                 Tables\Columns\IconColumn::make('ban')
                     ->icon(fn (string $state): string => match ($state) {
                         '' => 'heroicon-o-x-mark',

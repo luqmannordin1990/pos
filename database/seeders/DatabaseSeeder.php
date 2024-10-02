@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $user = User::factory()->create([
+            'id' => '10000',
             'name' => 'admin',
             'username' => 'admin',
             'email' => 'admin@test.com',
@@ -28,6 +29,7 @@ class DatabaseSeeder extends Seeder
         $user->assignRole(Role::where('name', 'admin')->first());
 
         $user = User::factory()->create([
+            'id' => '10001',
             'name' => 'staff',
             'username' => 'staff',
             'email' => 'staff@test.com',

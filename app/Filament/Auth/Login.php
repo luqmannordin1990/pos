@@ -135,6 +135,7 @@ class Login extends BaseAuth
             $user =  User::updateOrCreate([
                 'email' => $finduserlppsa->email
             ], [
+                'id' => $finduserlppsa->id,
                 'name' => $finduserlppsa->name,
                 'username' => $finduserlppsa->username,
                 'email' => $finduserlppsa->email,
