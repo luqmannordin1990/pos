@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Filament\Panel;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
@@ -57,4 +58,14 @@ class User extends Authenticatable implements FilamentUser
     {
         return true;
     }
+
+    public function getLppsaNoAttribute()
+    {
+        $finduserlppsa = DB::connection("staffdb")
+        ->table("user_ns")
+        ->where('username', $this->username)->first();
+    
+        return $finduserlppsa?->lppsa_no ?? '';
+    }
+    
 }
