@@ -135,12 +135,12 @@
 
 
            .typing {
-            font-family: 'Courier New', Courier, monospace;
+            /* font-family: 'Courier New', Courier, monospace; */
       font-size: 2.5rem;
       color: #080808a2;
       white-space: nowrap;
       overflow: hidden;
-      border-right: 2px solid;
+      border-left: 45px solid;
       width: 100%; /* Control the width of the text being typed */
       animation: typing 8s steps(24) 1s forwards, blink 500ms step-end infinite;
          }
