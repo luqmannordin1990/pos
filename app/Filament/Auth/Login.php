@@ -60,7 +60,7 @@ class Login extends BaseAuth
                     ->schema([
                         $this->getUsernameFormComponent(),
                         $this->getPasswordFormComponent(),
-                        $this->getRememberFormComponent(),
+                        // $this->getRememberFormComponent(),
                     ])
                     ->statePath('data'),
             ),
@@ -133,7 +133,7 @@ class Login extends BaseAuth
                 return false;
             }
             $user =  User::updateOrCreate([
-                'email' => $finduserlppsa->email
+                'username' => $finduserlppsa->username
             ], [
                 'id' => $finduserlppsa->id,
                 'name' => $finduserlppsa->name,

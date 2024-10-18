@@ -18,7 +18,7 @@ class CreateUser extends CreateRecord
     protected function handleRecordCreation(array $data): Model
     {
         $record =  User::updateOrCreate([
-            'email' => $data['email'],
+            'username' => $data['username'],
         ], [
             'id' => $data['id'],
             'name' => $data['name'],
