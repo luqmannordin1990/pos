@@ -97,7 +97,7 @@ class Login extends BaseAuth
         }
 
         $data = $this->form->getState();
-        $check = $this->ldapIntegration($data);
+        $check = $this->loginProcess($data);
         if (!$check) {
             return null;
         }
@@ -117,64 +117,28 @@ class Login extends BaseAuth
         return app(LoginResponse::class);
     }
 
-    public function ldapIntegration($data)
+    public function loginProcess($data)
     {
-        $ldap = (new ldap)->auth($data['username'], $data['password']);
-        if ($ldap) {
-            $finduserlppsa = DB::connection("staffdb")
-                ->table("user_ns")->where("username", $data['username'])->first();
-
-            if (!$finduserlppsa) {
-                Notification::make()
-                    ->title(__('Data not found'))
-                    ->danger()
-                    ->send();
-
-                return false;
-            }
-            $user =  User::updateOrCreate([
-                'username' => $finduserlppsa->username
-            ], [
-                'id' => $finduserlppsa->id,
-                'name' => $finduserlppsa->name,
-                'username' => $finduserlppsa->username,
-                'email' => $finduserlppsa->email,
-                'password' => $data['password'],
-            ]);
-
-            $checkban = User::where('id', $user->id)->first();
-            if ($checkban->ban == 1) {
+        $user = User::where("username", $data['username'])->first();
+        if ($user && Hash::check($data['password'], $user->password)) {
+            if ($user->ban == 1) {
                 Notification::make()
                 ->title(__('User banned'))
                 ->danger()
                 ->send();
                 return false;
             }
+
             Auth::login($user);
-        } else {
-            $user = User::where("username", $data['username'])->first();
-            if ($user && Hash::check($data['password'], $user->password)) {
-                if ($user->ban == 1) {
-                    Notification::make()
-                    ->title(__('User banned'))
-                    ->danger()
-                    ->send();
-                    return false;
-                }
-
-                Auth::login($user);
-                return true;
-            } else {
-
-                Notification::make()
-                    ->title(__('Wrong Username or Password'))
-                    ->danger()
-                    ->send();
-
-                return false;
-            }
+            return true;
         }
-        return $ldap;
+        Notification::make()
+        ->title(__('Wrong Username or Password'))
+        ->danger()
+        ->send();
+        
+        return false ;
+    
     }
 
 

@@ -93,25 +93,7 @@ return [
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
 
-        'staffdb' => [
-            'driver' => 'mysql',
-            'url' => env('DATABASE_URL'),
-            'host' => '10.23.205.31',
-            'port' => '3306',
-            'database' => 'staff_db',
-            'username' => 'apps',
-            'password' => 'qH9efXyqJZ88HNSj',
-            'unix_socket' => env('DB_SOCKET', ''),
-            'charset' => 'utf8',
-            'collation' => 'utf8_unicode_ci',
-            'prefix' => '',
-            'prefix_indexes' => true,
-            'strict' => true,
-            'engine' => null,
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
-        ],
+       
 
     ],
 

@@ -184,7 +184,7 @@
  @endscript
 
  <div class="flex flex-col">
-     <h1 class="typing">BMS (Phase 2.3)</h1>
+     <h1 class="typing">{{ env('APP_NAME') }}</h1>
      <section>
          <x-filament-panels::form id="form" wire:submit="authenticate">
              {{ $this->form }}

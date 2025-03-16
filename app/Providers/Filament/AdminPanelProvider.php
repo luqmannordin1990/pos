@@ -13,7 +13,6 @@ use Filament\Navigation\MenuItem;
 use App\Filament\Admin\Themes\Luq;
 use Filament\Support\Colors\Color;
 use Filament\View\PanelsRenderHook;
-use App\Filament\Admin\Themes\Lppsa;
 use Illuminate\Support\Facades\Blade;
 use Filament\Navigation\NavigationItem;
 use Filament\Navigation\NavigationGroup;
@@ -99,7 +98,6 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([
                 \Hasnayeen\Themes\ThemesPlugin::make()
                 ->registerTheme([
-                    Lppsa::getName() => Lppsa::class,
                     Neumorphism::getName() => Neumorphism::class
                     ])
 

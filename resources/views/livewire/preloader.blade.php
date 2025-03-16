@@ -59,7 +59,7 @@
         <div class="preloader bg-gray-500/50 absolute inset-0 z-50">
             <div class="flex items-center justify-center w-screen h-screen ">
                 {{-- <div class="loader w-25 h-25"></div> --}}
-                <img src="{{ url('assets/loading.gif') }}" alt="">
+                <img src="{{ url('assets/loading.gif') }}" alt="" class="w-32 h-32">
             </div>
         </div>
 
