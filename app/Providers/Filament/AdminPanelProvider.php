@@ -4,9 +4,11 @@ namespace App\Providers\Filament;
 
 use Filament\Pages;
 use Filament\Panel;
+use App\Models\Team;
 use Filament\Widgets;
 use Filament\PanelProvider;
 use App\Filament\Auth\Login;
+use App\Filament\Auth\Register;
 use Filament\Support\Assets\Js;
 use Filament\Support\Assets\Css;
 use Filament\Navigation\MenuItem;
@@ -18,6 +20,8 @@ use Filament\Navigation\NavigationItem;
 use Filament\Navigation\NavigationGroup;
 use App\Filament\Admin\Themes\Neumorphism;
 use Filament\Http\Middleware\Authenticate;
+use App\Filament\Pages\Tenancy\RegisterTeam;
+use App\Filament\Pages\Tenancy\EditTeamProfile;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Routing\Middleware\SubstituteBindings;
@@ -36,8 +40,14 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            // ->tenant(Team::class, slugAttribute: 'slug')
+            // ->tenantRegistration(RegisterTeam::class)
+            // ->tenantProfile(EditTeamProfile::class)
             ->login(Login::class)
-            // ->profile()
+            // ->registration(Register::class)
+            // ->passwordReset()
+            // ->emailVerification()
+            ->profile()
             ->spa()
             ->sidebarCollapsibleOnDesktop()
             ->brandLogo(asset('assets/logo.png'))
@@ -57,15 +67,15 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->renderHook(
                 PanelsRenderHook::AUTH_LOGIN_FORM_BEFORE,
-                fn (): string => Blade::render('
+                fn(): string => Blade::render('
                    <div class="flex justify-center font-bold">{{ config("app.name") }}</div>
                 ')
             )
             ->navigationItems([])
             ->navigationGroups([
                 NavigationGroup::make()
-                     ->label('Maintenance')
-                     ->icon('heroicon-o-wrench'),
+                    ->label('Maintenance')
+                    ->icon('heroicon-o-wrench'),
             ])
             ->resources([
                 config('filament-logger.activity_resource')
@@ -96,11 +106,11 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->plugins([
-                \Hasnayeen\Themes\ThemesPlugin::make()
-                ->registerTheme([
-                    Neumorphism::getName() => Neumorphism::class
-                    ])
+                // \Hasnayeen\Themes\ThemesPlugin::make()
+                //     ->registerTheme([
+                //         Neumorphism::getName() => Neumorphism::class
+                //     ])
 
-                ]);
+            ]);
     }
 }

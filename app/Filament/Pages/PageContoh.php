@@ -13,10 +13,12 @@ class PageContoh extends Page
     //layout ada index,simple,base
     protected static string $layout = 'filament-panels::components.layout.index';
     protected static string $view = 'filament.pages.page-contoh';
-    public $pass ;
+    protected static bool $shouldRegisterNavigation = false;
+    public $pass;
 
-    public function mount($pass = null){
-        $this->pass = 'world '.$pass;
+    public function mount($pass = null)
+    {
+        $this->pass = 'world ' . $pass;
     }
 
     public function render(): View

@@ -58,9 +58,10 @@ class Login extends BaseAuth
             'form' => $this->form(
                 $this->makeForm()
                     ->schema([
-                        $this->getUsernameFormComponent(),
+                        $this->getEmailFormComponent(),
+                        // $this->getUsernameFormComponent(),
                         $this->getPasswordFormComponent(),
-                        // $this->getRememberFormComponent(),
+                        $this->getRememberFormComponent(),
                     ])
                     ->statePath('data'),
             ),
@@ -70,7 +71,7 @@ class Login extends BaseAuth
     protected function getUsernameFormComponent(): Component
     {
         return TextInput::make('username')
-            ->label(__('Username AD'))
+            ->label(__('Username'))
             ->required()
             ->autocomplete()
             ->autofocus()
@@ -119,13 +120,14 @@ class Login extends BaseAuth
 
     public function loginProcess($data)
     {
-        $user = User::where("username", $data['username'])->first();
+        // $user = User::where("username", $data['username'])->first();
+        $user = User::where("email", $data['email'])->first();
         if ($user && Hash::check($data['password'], $user->password)) {
             if ($user->ban == 1) {
                 Notification::make()
-                ->title(__('User banned'))
-                ->danger()
-                ->send();
+                    ->title(__('User banned'))
+                    ->danger()
+                    ->send();
                 return false;
             }
 
@@ -133,12 +135,11 @@ class Login extends BaseAuth
             return true;
         }
         Notification::make()
-        ->title(__('Wrong Username or Password'))
-        ->danger()
-        ->send();
-        
-        return false ;
-    
+            ->title(__('Wrong Username or Password'))
+            ->danger()
+            ->send();
+
+        return false;
     }
 
 
@@ -153,8 +154,8 @@ class Login extends BaseAuth
         return [
 
             Action::make('Back')
-                ->url(url()->previous())
-                ->extraAttributes(['wire:navigate'=> 'true','style' => 'width:30%;', 'class' => 'bg-gray-400']),
+                ->url('/')
+                ->extraAttributes(['wire:navigate' => 'true', 'style' => 'width:30%;', 'class' => 'bg-gray-400']),
             $this->getAuthenticateFormAction()
                 ->extraAttributes(['style' => 'width:60%;']),
         ];

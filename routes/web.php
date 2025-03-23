@@ -21,12 +21,13 @@ Route::get('/', function () {
 });
 
 Route::get('/login', function () {
-    return redirect(route('filament.admin.auth.login'));
+    return redirect(route('filament.main.auth.login'));
 })->name('login');
 
 Route::get('/logout', function (Request $request) {
+    // filament()->getLogoutUrl()
     Filament::auth()->logout();
     $request->session()->invalidate();
     $request->session()->regenerateToken();
-    return app(LogoutResponse::class);
+    return redirect(url(request()->input('panel') . '/login'));
 })->name('logout');
