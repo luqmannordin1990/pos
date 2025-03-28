@@ -127,7 +127,8 @@
                     :attributes="\Filament\Support\prepare_inherited_attributes($group->getExtraSidebarAttributeBag())"
                 />
             @endforeach
-
+            
+            @if(\Filament\Facades\Filament::getCurrentPanel()->getId() != 'guest')
             <li class="fi-sidebar-item">
                 <a href="{{ route('logout', ['panel' => filament()->getCurrentPanel()->getPath()]) }}" wire:navigate=""
                     x-on:click="window.matchMedia(`(max-width: 1024px)`).matches &amp;&amp; $store.sidebar.close()"
@@ -152,6 +153,7 @@
                     </span>
                 </a>
             </li>
+            @endif
 
         </ul>
 

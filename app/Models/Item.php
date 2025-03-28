@@ -13,6 +13,11 @@ class Item extends Model
     use SoftDeletes;
     protected $guarded = [];
 
+    protected $casts = [
+        'product_image' => 'array',
+        'attachment' => 'array', // Converts JSON to array automatically
+    ];
+
 
     public function Estimates()
     {
@@ -32,5 +37,21 @@ class Item extends Model
     public function team()
     {
         return $this->belongsTo(Team::class);
+    }
+
+    public function categories()
+    {
+        return $this->belongsToMany(
+            ItemCategory::class,
+            'item_category_items',
+            'item_id',            // Foreign key on pivot table referencing the current model
+            'item_category_id'    // Foreign key on pivot table referencing the related model
+        );
+    }
+
+
+    public function variations()
+    {
+        return $this->hasMany(VariationItem::class);
     }
 }

@@ -2,16 +2,17 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\PaymentResource\Pages;
-use App\Filament\Resources\PaymentResource\RelationManagers;
-use App\Models\Payment;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use App\Models\Payment;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Facades\Filament;
+use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\PaymentResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\PaymentResource\RelationManagers;
 
 class PaymentResource extends Resource
 {
@@ -30,7 +31,11 @@ class PaymentResource extends Resource
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Select::make('customer_id')
-                    ->relationship(name: 'customer', titleAttribute: 'display_name')
+                    ->relationship(
+                        name: 'customer',
+                        titleAttribute: 'display_name',
+                        modifyQueryUsing: fn(Builder $query) => $query->whereBelongsTo(Filament::getTenant())
+                    )
                     ->required()
                     ->searchable()
                     ->preload(),

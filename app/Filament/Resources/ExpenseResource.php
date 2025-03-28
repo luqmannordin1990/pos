@@ -2,16 +2,17 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ExpenseResource\Pages;
-use App\Filament\Resources\ExpenseResource\RelationManagers;
-use App\Models\Expense;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use App\Models\Expense;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Facades\Filament;
+use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\ExpenseResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\ExpenseResource\RelationManagers;
 
 class ExpenseResource extends Resource
 {
@@ -25,7 +26,11 @@ class ExpenseResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('category_id')
-                    ->relationship(name: 'expense_category', titleAttribute: 'name')
+                    ->relationship(
+                        name: 'expense_category',
+                        titleAttribute: 'name',
+                        modifyQueryUsing: fn(Builder $query) => $query->whereBelongsTo(Filament::getTenant())
+                    )
                     ->required()
                     ->searchable()
                     ->preload(),

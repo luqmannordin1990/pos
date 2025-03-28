@@ -16,9 +16,9 @@ use Filament\Http\Responses\Auth\Contracts\LogoutResponse;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
 Route::get('/login', function () {
     return redirect(route('filament.main.auth.login'));

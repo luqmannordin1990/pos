@@ -46,7 +46,6 @@ class UserResource extends Resource
                 Forms\Components\Section::make()
                     ->schema([
                         Forms\Components\Select::make('search_staff')
-                            ->prefix('LPPSA')
                             ->suffixIcon('heroicon-m-magnifying-glass')
                             ->options(function (Get $get) {
                                 $finduserlppsa = DB::connection("staffdb")
@@ -54,7 +53,7 @@ class UserResource extends Resource
                                     ->where('flag', 1)->get();
                                 $finduser = collect($finduserlppsa)->map(function ($item, $key) {
                                     $item->display = str_replace('LPPSA', "", $item->lppsa_no);
-                                    $item->store = $item->name . '###' . $item->email . '###' . $item->username. '###' . $item->id;
+                                    $item->store = $item->name . '###' . $item->email . '###' . $item->username . '###' . $item->id;
                                     return $item;
                                 })->pluck('display', 'store')->toArray();
                                 return $finduser;
@@ -67,7 +66,7 @@ class UserResource extends Resource
                             ->afterStateUpdated(function (Set $set, Get $get, $state) {
                                 $finduser = explode('###', $get('search_staff'));
                                 if (isset($finduser[0])) {
-                                  
+
                                     $set('name', $finduser[0]);
                                     $set('email', $finduser[1]);
                                     $set('username', $finduser[2]);
@@ -139,12 +138,12 @@ class UserResource extends Resource
                 //     ->dateTime()
                 //     ->sortable(),
                 Tables\Columns\IconColumn::make('ban')
-                    ->icon(fn (string $state): string => match ($state) {
+                    ->icon(fn(string $state): string => match ($state) {
                         '' => 'heroicon-o-x-mark',
                         '0' => 'heroicon-o-x-mark',
                         '1' => 'heroicon-o-check',
                     })
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         '' => 'success',
                         '0' => 'success',
                         '1' => 'danger',
@@ -172,19 +171,19 @@ class UserResource extends Resource
                         ->color('danger')
                         ->label('Ban user')
                         ->hidden(fn($record) => auth()->user()->id == $record->id || $record->ban == true)
-                        ->action(fn ($record) => $record->update([
+                        ->action(fn($record) => $record->update([
                             'ban' => true
                         ]))
-                    ->requiresConfirmation(),
+                        ->requiresConfirmation(),
                     Tables\Actions\Action::make('unban user')
                         ->icon('heroicon-m-lock-open')
                         ->color('success')
                         ->label('Unbanned user')
                         ->hidden(fn($record) => auth()->user()->id == $record->id || $record->ban != true)
-                        ->action(fn ($record) => $record->update([
+                        ->action(fn($record) => $record->update([
                             'ban' => false
                         ]))
-                    ->requiresConfirmation(),
+                        ->requiresConfirmation(),
                     Tables\Actions\DeleteAction::make()
                         ->hidden(fn($record) => auth()->user()->id == $record->id),
                     Tables\Actions\ForceDeleteAction::make()

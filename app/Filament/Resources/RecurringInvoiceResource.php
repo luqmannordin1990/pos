@@ -2,16 +2,17 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\RecurringInvoiceResource\Pages;
-use App\Filament\Resources\RecurringInvoiceResource\RelationManagers;
-use App\Models\RecurringInvoice;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Facades\Filament;
+use App\Models\RecurringInvoice;
+use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\RecurringInvoiceResource\Pages;
+use App\Filament\Resources\RecurringInvoiceResource\RelationManagers;
 
 class RecurringInvoiceResource extends Resource
 {
@@ -25,7 +26,11 @@ class RecurringInvoiceResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('customer_id')
-                    ->relationship(name: 'customer', titleAttribute: 'display_name')
+                    ->relationship(
+                        name: 'customer',
+                        titleAttribute: 'display_name',
+                        modifyQueryUsing: fn(Builder $query) => $query->whereBelongsTo(Filament::getTenant())
+                    )
                     ->required()
                     ->searchable()
                     ->preload(),

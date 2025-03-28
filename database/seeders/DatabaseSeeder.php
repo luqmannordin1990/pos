@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
 
             CustomerSeeder::class,
+            ItemCategorySeeder::class,
             ItemSeeder::class,
             EstimateSeeder::class,
             InvoiceSeeder::class,
@@ -29,6 +30,7 @@ class DatabaseSeeder extends Seeder
             ExpenseCategorySeeder::class,
             ExpenseSeeder::class,
             TaxSeeder::class,
+            DirectorySeeder::class,
         ]);
 
 

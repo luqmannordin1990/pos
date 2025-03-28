@@ -18,10 +18,20 @@ return new class extends Migration
 
         Schema::create('items', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // Item name (product/service)
-            $table->decimal('price', 10, 2); // Item price (10 digits, 2 decimal places)
-            $table->string('unit')->nullable(); // Optional unit of measure
-            $table->text('description')->nullable(); // Optional item description
+            $table->string('name');
+            $table->text('info')->nullable();
+            $table->text('short_description')->nullable();
+            $table->decimal('price', 10, 2)->nullable();
+            $table->decimal('cost_price', 10, 2)->nullable();
+            $table->decimal('weight', 8, 3)->nullable();
+            $table->integer('order_limit')->nullable();
+            $table->integer('current_stock_balance')->default(0);
+            $table->boolean('activate_ecommerce')->default(false);
+            $table->boolean('activate_stock_management')->default(false);
+            $table->boolean('activate_product_variations')->default(false);
+            $table->string('directory')->nullable();
+            $table->json('product_image')->nullable();
+            $table->json('attachment')->nullable();
             $table->foreignId('team_id')->constrained()->onDelete('cascade')->nullable();
             $table->softDeletes();
             $table->timestamps();

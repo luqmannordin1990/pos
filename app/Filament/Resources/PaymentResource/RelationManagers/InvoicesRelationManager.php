@@ -3,12 +3,13 @@
 namespace App\Filament\Resources\PaymentResource\RelationManagers;
 
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Resources\RelationManagers\RelationManager;
 
 class InvoicesRelationManager extends RelationManager
 {
@@ -19,7 +20,11 @@ class InvoicesRelationManager extends RelationManager
         return $form
             ->schema([
                 Forms\Components\Select::make('customer_id')
-                    ->relationship(name: 'customer', titleAttribute: 'display_name')
+                    ->relationship(
+                        name: 'customer',
+                        titleAttribute: 'display_name',
+                        modifyQueryUsing: fn(Builder $query) => $query->whereBelongsTo(Filament::getTenant())
+                    )
                     ->required()
                     ->searchable()
                     ->preload(),

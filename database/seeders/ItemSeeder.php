@@ -12,7 +12,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 class ItemSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Run the database seeds. 
      */
     public function run(): void
     {
@@ -27,10 +27,21 @@ class ItemSeeder extends Seeder
         foreach (range(1, 10) as $index) { // Generate 10 customers
 
             Item::create([
-                'name' => $faker->word, // Random product name
-                'price' => $faker->randomFloat(2, 10, 500), // Price between 10 and 500 MYR
-                'unit' => $faker->randomElement(['Unit', 'Kg', 'Litre', 'Pcs', 'Set']), // Random unit
-                'description' => $faker->sentence(10), // Random description
+                'name' => $faker->word(),
+                'info' => $faker->sentence(),
+                'short_description' => $faker->sentence(),
+                'price' => $faker->randomFloat(2, 10, 500), // Price between RM10 - RM500
+                'cost_price' => $faker->randomFloat(2, 5, 400), // Cost price between RM5 - RM400
+                'weight' => $faker->randomFloat(3, 0.1, 10), // Weight between 0.1kg - 10kg
+                'order_limit' => $faker->numberBetween(1, 100),
+                'current_stock_balance' => $faker->numberBetween(0, 500),
+                'activate_ecommerce' => $faker->boolean(80), // 80% chance of being true
+                'activate_stock_management' => $faker->boolean(70),
+                'activate_product_variations' => $faker->boolean(60),
+                'directory' => $faker->word(),
+                'attachment' => json_encode([
+                    'image' => $faker->imageUrl(640, 480, 'products', true),
+                ]),
                 'team_id' => $team->id,
             ]);
         }

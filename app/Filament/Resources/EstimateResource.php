@@ -7,6 +7,7 @@ use Filament\Tables;
 use App\Models\Estimate;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\EstimateResource\Pages;
@@ -25,7 +26,11 @@ class EstimateResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('customer_id')
-                    ->relationship(name: 'customer', titleAttribute: 'display_name')
+                    ->relationship(
+                        name: 'customer',
+                        titleAttribute: 'display_name',
+                        modifyQueryUsing: fn(Builder $query) => $query->whereBelongsTo(Filament::getTenant())
+                    )
                     ->required()
                     ->searchable()
                     ->preload(),
