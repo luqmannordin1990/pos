@@ -20,6 +20,6 @@ class LogoutResponse implements Responsable
         }
 
         // change this to your desired route
-        return redirect()->route('login');
+        return redirect()->intended(url('/guest/login'));
     }
 }

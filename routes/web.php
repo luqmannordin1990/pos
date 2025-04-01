@@ -16,9 +16,10 @@ use Filament\Http\Responses\Auth\Contracts\LogoutResponse;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::get('/', function () {
+    // return view('welcome');
+    return redirect(url('/guest'));
+});
 
 Route::get('/login', function () {
     return redirect(route('filament.main.auth.login'));
@@ -29,5 +30,6 @@ Route::get('/logout', function (Request $request) {
     Filament::auth()->logout();
     $request->session()->invalidate();
     $request->session()->regenerateToken();
-    return redirect(url(request()->input('panel') . '/login'));
+    // return redirect(url(request()->input('panel') . '/login'));
+    return redirect(url('guest/login'));
 })->name('logout');

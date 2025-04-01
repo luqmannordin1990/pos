@@ -14,8 +14,8 @@ class LoginResponse implements LoginResponseContract
 {
     public function toResponse($request): RedirectResponse | Redirector
     {
-      
-       return redirect(Filament::getUrl()) ;
+    //    return redirect(Filament::getUrl()) ;
+    return  redirect(filament()->getPanel('main')->getLoginUrl());
 
     
         if(in_array('admin', auth()->user()->roles->pluck('name')->toArray())){

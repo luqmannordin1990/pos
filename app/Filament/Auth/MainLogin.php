@@ -154,8 +154,11 @@ class MainLogin extends BaseAuth
         return [
 
             Action::make('Back')
-                ->url(url('/'))
-                ->extraAttributes(['wire:navigate' => 'true', 'style' => 'width:30%;', 'class' => 'bg-gray-400']),
+                ->action(function($livewire){
+                    $livewire->redirect(url('/'), navigate:false);
+                })
+                // ->url(url('/'))
+                ->extraAttributes(['wire:navigate' => 'false', 'style' => 'width:30%;', 'class' => 'bg-gray-400']),
             $this->getAuthenticateFormAction()
                 ->extraAttributes(['style' => 'width:60%;']),
         ];

@@ -38,7 +38,7 @@ class UserSeeder extends Seeder
         ]);
         $team = Team::first();
         $team->members()->syncWithoutDetaching([$user->id]);
-        $user->assignRole(Role::where('name', 'owner')->first());
+        $user->assignRole(Role::where('name', 'admin')->first());
 
         // $user = User::factory()->create([
         //     'id' => '10001',
