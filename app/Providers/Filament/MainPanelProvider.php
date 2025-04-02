@@ -65,6 +65,11 @@ class MainPanelProvider extends PanelProvider
                    <div class="flex justify-center font-bold">{{ config("app.name") }}</div>
                 ')
             )
+            ->userMenuItems([
+                'logout' => \Filament\Navigation\MenuItem::make()->label('Log out')
+                    ->url(fn() => url('logout?team='.filament()->getTenant()->slug)),
+                // ...
+            ])
             ->navigationItems([])
             ->navigationGroups([
                 NavigationGroup::make()

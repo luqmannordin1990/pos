@@ -23,12 +23,13 @@ class EstimateResource extends Resource
 
     public static function form(Form $form): Form
     {
+      
         return $form
             ->schema([
                 Forms\Components\Select::make('customer_id')
                     ->relationship(
                         name: 'customer',
-                        titleAttribute: 'display_name',
+                        titleAttribute: 'name',
                         modifyQueryUsing: fn(Builder $query) => $query->whereBelongsTo(Filament::getTenant())
                     )
                     ->required()
@@ -39,8 +40,8 @@ class EstimateResource extends Resource
                 Forms\Components\DatePicker::make('expiry_date')
                     ->required(),
                 Forms\Components\TextInput::make('estimate_number')
-                    ->required()
-                    ->maxLength(255),
+                    ->readonly()
+                    ->visible(fn($operation) => $operation == 'edit'),
                 Forms\Components\Textarea::make('notes')
                     ->columnSpanFull(),
             ]);
@@ -50,7 +51,7 @@ class EstimateResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('customer.display_name')
+                Tables\Columns\TextColumn::make('customer.name')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('date')

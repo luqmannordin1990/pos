@@ -28,7 +28,7 @@ class RecurringInvoiceResource extends Resource
                 Forms\Components\Select::make('customer_id')
                     ->relationship(
                         name: 'customer',
-                        titleAttribute: 'display_name',
+                        titleAttribute: 'name',
                         modifyQueryUsing: fn(Builder $query) => $query->whereBelongsTo(Filament::getTenant())
                     )
                     ->required()
@@ -57,7 +57,7 @@ class RecurringInvoiceResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('customer.display_name')
+                Tables\Columns\TextColumn::make('customer.name')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('start_date')

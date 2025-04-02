@@ -48,6 +48,7 @@ class GuestPanelProvider extends PanelProvider
                 'primary' => Color::Amber,
             ])
             ->spa()
+           
             ->navigationItems($this->submenu())
             ->brandName($this->team)
             ->viteTheme('resources/css/filament/guest/theme.css')

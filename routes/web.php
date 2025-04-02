@@ -25,11 +25,15 @@ Route::get('/login', function () {
     return redirect(route('filament.main.auth.login'));
 })->name('login');
 
-Route::get('/logout', function (Request $request) {
+Route::match(['get', 'post'],'/logout', function (Request $request) {
+
     // filament()->getLogoutUrl()
     Filament::auth()->logout();
     $request->session()->invalidate();
     $request->session()->regenerateToken();
     // return redirect(url(request()->input('panel') . '/login'));
+    if (request()->input('team')) {
+        return redirect()->intended(url("/guest/login?team=".request()->input('team')));
+    }
     return redirect(url('guest/login'));
 })->name('logout');

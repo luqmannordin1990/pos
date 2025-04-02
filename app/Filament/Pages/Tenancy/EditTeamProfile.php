@@ -16,6 +16,7 @@ class EditTeamProfile extends EditTenantProfile
 
     // protected static string $view = 'filament.pages.tenancy.edit-team-profile';
 
+
     public static function getLabel(): string
     {
         return 'Team profile';

@@ -22,7 +22,7 @@ class InvoicesRelationManager extends RelationManager
                 Forms\Components\Select::make('customer_id')
                     ->relationship(
                         name: 'customer',
-                        titleAttribute: 'display_name',
+                        titleAttribute: 'name',
                         modifyQueryUsing: fn(Builder $query) => $query->whereBelongsTo(Filament::getTenant())
                     )
                     ->required()
@@ -49,7 +49,7 @@ class InvoicesRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('invoice_number')
             ->columns([
-                Tables\Columns\TextColumn::make('customer.display_name')
+                Tables\Columns\TextColumn::make('customer.name')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('date')

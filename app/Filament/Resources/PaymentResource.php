@@ -33,7 +33,7 @@ class PaymentResource extends Resource
                 Forms\Components\Select::make('customer_id')
                     ->relationship(
                         name: 'customer',
-                        titleAttribute: 'display_name',
+                        titleAttribute: 'name',
                         modifyQueryUsing: fn(Builder $query) => $query->whereBelongsTo(Filament::getTenant())
                     )
                     ->required()
@@ -59,7 +59,7 @@ class PaymentResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('payment_number')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('customer.display_name')
+                Tables\Columns\TextColumn::make('customer.name')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('amount')

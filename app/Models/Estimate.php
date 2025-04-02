@@ -17,7 +17,7 @@ class Estimate extends Model
         return $this->belongsTo(Customer::class);
     }
 
-    public function Items()
+    public function items()
     {
         return $this->belongsToMany(Item::class, 'item_estimate');
     }

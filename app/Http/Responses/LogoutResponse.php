@@ -13,11 +13,10 @@ class LogoutResponse implements Responsable
 
     public function toResponse($request): RedirectResponse
     {
-        $previousUrl = url()->previous();
-        $url = explode('/', $previousUrl);
-        if ($url[3] == 'client') {
-            return redirect()->intended(url('/'));
-        }
+        // if (filament()->getCurrentPanel()->getPath()) {
+        //     dd(filament()->getTenant());
+        //     return redirect()->intended(url("/guest/".filament()->getTenant()->slug."/login"));
+        // }
 
         // change this to your desired route
         return redirect()->intended(url('/guest/login'));

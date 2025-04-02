@@ -17,6 +17,7 @@ class HomeTeam extends Page
 
 
     public function mount(){
+    
         $check = Team::where('slug', $this->team)->first();
         if(!$check){
             $this->redirect(url('/guest'));
