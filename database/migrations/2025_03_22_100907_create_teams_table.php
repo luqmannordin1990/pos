@@ -21,6 +21,13 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug');
+            $table->string('registration_no')->nullable();
+            $table->string('unit_house_no')->nullable();
+            $table->string('address_1')->nullable();
+            $table->string('address_2')->nullable();
+            $table->string('city')->nullable();
+            $table->string('postal_code', 10)->nullable();
+            $table->string('state')->nullable();
             $table->timestamps();
         });
 
@@ -28,6 +35,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('team_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+
+            
             $table->timestamps();
         });
     }

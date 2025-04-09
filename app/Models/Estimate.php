@@ -19,7 +19,8 @@ class Estimate extends Model
 
     public function items()
     {
-        return $this->belongsToMany(Item::class, 'item_estimate');
+        return $this->belongsToMany(Item::class, 'item_estimate')
+            ->withPivot('total');
     }
 
     public function team()

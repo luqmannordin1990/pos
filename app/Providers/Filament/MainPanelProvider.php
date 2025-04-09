@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Auth\EditProfile;
 use Filament\Pages;
 use Filament\Panel;
 use App\Models\Team;
@@ -38,13 +39,13 @@ class MainPanelProvider extends PanelProvider
             ->id('main')
             ->path('main')
             ->tenant(Team::class, slugAttribute: 'slug')
-            ->tenantRegistration(RegisterTeam::class)
-            ->tenantProfile(EditTeamProfile::class)
+            // ->tenantRegistration(RegisterTeam::class)
+            // ->tenantProfile(EditTeamProfile::class)
             ->login(MainLogin::class)
             ->registration(MainRegister::class)
             ->passwordReset()
             ->emailVerification()
-            ->profile()
+            ->profile(EditProfile::class)
             ->spa()
             ->databaseNotifications()
             ->sidebarCollapsibleOnDesktop()
@@ -54,7 +55,7 @@ class MainPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
-            ->viteTheme('resources/css/filament/admin/theme.css')
+            ->viteTheme('resources/css/filament/main/theme.css')
             ->assets([
                 Css::make('custom-stylesheet', asset('css/custom.css')),
                 Js::make('custom-script', asset('js/custom.js')),
@@ -67,7 +68,7 @@ class MainPanelProvider extends PanelProvider
             )
             ->userMenuItems([
                 'logout' => \Filament\Navigation\MenuItem::make()->label('Log out')
-                    ->url(fn() => url('logout?team='.filament()->getTenant()->slug)),
+                    ->url(fn() => url('logout?team='.filament()->getTenant()?->slug)),
                 // ...
             ])
             ->navigationItems([])

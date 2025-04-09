@@ -7,7 +7,7 @@
 
     <x-filament::section>
         <x-slot name="heading">
-            User details
+            Total Price
         </x-slot>
 
        {{ $totalrow }}

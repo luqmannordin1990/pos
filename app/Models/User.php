@@ -28,13 +28,8 @@ class User extends Authenticatable implements FilamentUser, HasTenants
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'id',
-        'name',
-        'username',
-        'email',
-        'password',
-        'ban',
+    protected $guarded = [
+        'id'
     ];
 
     /**

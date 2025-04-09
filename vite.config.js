@@ -10,6 +10,7 @@ export default defineConfig({
                 "resources/css/filament/admin/theme.css",
                 "resources/css/filament/admin/themes/neumorphism.css",
                 "resources/css/filament/guest/theme.css",
+                "resources/css/filament/main/theme.css",
             ],
             refresh: true,
         }),

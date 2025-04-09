@@ -23,7 +23,8 @@ class CreateEstimate extends CreateRecord
     {
         $record = new ($this->getModel())($data);
         $record->estimate_number = Estimate::where('team_id', Filament::getTenant()->id)->orderBy('id', 'desc')->first()?->id + 1;
-        
+      
+      
         if (
             static::getResource()::isScopedToTenant() &&
             ($tenant = Filament::getTenant())
@@ -34,6 +35,18 @@ class CreateEstimate extends CreateRecord
         $record->save();
 
         return $record;
+    }
+
+    protected function associateRecordWithTenant(Model $record, Model $tenant): Model
+    {
+        $relationship = static::getResource()::getTenantRelationship($tenant);
+        
+        $temp = $record->toArray() ;
+     
+        unset($record->item_estimate);
+        $temp2 = $relationship->save($record);
+        $temp2->items()->sync(array_column($temp['item_estimate'], 'id') );
+        return $temp2;
     }
 
 

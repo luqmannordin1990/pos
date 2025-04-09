@@ -6,11 +6,13 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
+        "awcodes/filament-table-repeater": "^3.1",
         "filament/filament": "^3.2",
         "guzzlehttp/guzzle": "^7.2",
         "hasnayeen/themes": "^3.0",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
+        "laravel/socialite": "^5.19",
         "laravel/tinker": "^2.8",
         "spatie/laravel-permission": "^6.9",
         "z3d0x/filament-logger": "^0.7.2"

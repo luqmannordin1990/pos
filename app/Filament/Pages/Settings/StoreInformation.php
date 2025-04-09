@@ -1,39 +1,40 @@
 <?php
 
-namespace App\Filament\Pages\Tenancy;
+namespace App\Filament\Pages\Settings;
 
 use App\Models\Team;
+use App\Models\User;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Livewire\Component;
 use Filament\Forms\Form;
+
 use Filament\Pages\Page;
 use Illuminate\Support\Str;
-use Filament\Forms\Components\Select;
-use Illuminate\Database\Eloquent\Model;
+use Filament\Facades\Filament;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Hash;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Components\TextInput;
-use Filament\Pages\Tenancy\EditTenantProfile;
+use Filament\Notifications\Notification;
+use Illuminate\Validation\Rules\Password;
+use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Concerns\InteractsWithForms;
 
-class EditTeamProfile extends EditTenantProfile
+class StoreInformation extends Page implements HasForms
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationGroup = 'Settings';
+    protected static string $view = 'filament.pages.settings.store-information';
+    use InteractsWithForms;
 
-    protected static string $view = 'filament.pages.tenancy.edit-team-profile';
+    public ?array $data = [];
 
-
-    public static function getLabel(): string
+    public function mount(): void
     {
-        return 'Team profile';
+        $team = Filament::getTenant();
+        $this->form->fill($team->getAttributes());
     }
-
-    // public static function canAccess(): bool
-    // {
-    //     return false;
-    // }
-
-    // public static function canView(Model $tenant): bool
-    // {
-    //    return false;
-    // }
 
     public function form(Form $form): Form
     {
@@ -56,7 +57,7 @@ class EditTeamProfile extends EditTenantProfile
                             ->hint('Choose your URL address')
                             ->helperText(fn($get) => url('/') . '/' . filament()->getCurrentPanel()->getPath() . '/' . $get('slug'))
                             ->required()
-                            ->unique(table: Team::class, ignoreRecord: true),
+                            ->unique(table: Team::class, ignorable: Filament::getTenant()),
 
                         TextInput::make('unit_house_no')
                             ->label('Unit/House No')
@@ -83,7 +84,7 @@ class EditTeamProfile extends EditTenantProfile
                             ->maxLength(10)
                             ->required(),
 
-                        Select::make('state')
+                        \Filament\Forms\Components\Select::make('state')
                             ->label('State')
                             ->options([
                                 'Johor' => 'Johor',
@@ -107,8 +108,22 @@ class EditTeamProfile extends EditTenantProfile
                             ->required(),
                     ])
                     ->columns(2)
+                    ->footerActions([
+                        \Filament\Forms\Components\Actions\Action::make('Save Changes')
+                            ->action(function () {
+                                $data = $this->form->getState();
+                                $team = Team::find(Filament::getTenant()->id);
+                                $team->update($data);
+
+                                Notification::make()
+                                    ->title(__('Successfully updated team information'))
+                                    ->success()
+                                    ->send();
+                            }),
+                    ])
 
 
-            ]);
+            ])
+            ->statePath('data');
     }
 }

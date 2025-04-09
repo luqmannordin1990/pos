@@ -22,7 +22,7 @@ return new class extends Migration
             $table->foreignId('customer_id')->constrained('customers')->onDelete('cascade'); // Customer reference
             $table->date('date'); // Date of estimate
             $table->date('expiry_date'); // Expiry date
-            $table->string('estimate_number')->unique()->nullable(); // Auto-generated unique estimate number
+            $table->string('estimate_number')->nullable(); // Auto-generated unique estimate number
             $table->text('notes')->nullable(); // Additional notes
             $table->foreignId('team_id')->constrained()->onDelete('cascade')->nullable();
             $table->softDeletes();
