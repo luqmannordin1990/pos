@@ -47,8 +47,8 @@ class Login extends BaseAuth
         }
 
         $this->form->fill([
-            'username' => 'admin',
-            'password' => 'U53r_4cc0un7',
+            'email' => 'admin@test.com',
+            'password' => 'admin1234',
         ]);
     }
 

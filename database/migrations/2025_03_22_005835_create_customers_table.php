@@ -34,6 +34,7 @@ return new class extends Migration
             $table->text('notes_comments')->nullable(); // Notes/Comments
             $table->json('attachment')->nullable(); // File Attachment (stored as path)
             $table->foreignId('team_id')->constrained()->onDelete('cascade')->nullable();
+            $table->foreignId('user_id')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Mail\TestMail;
+use App\Models\RecurringInvoice;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Mail;
 
@@ -28,6 +29,12 @@ class Test extends Command
     public function handle()
     {
         //
-        Mail::to('test@example.com')->queue(new TestMail());
+        $this->test();
+        // Mail::to('test@example.com')->queue(new TestMail());
+    }
+
+
+    function test(){
+        RecurringInvoice::generate_invoice(2);
     }
 }

@@ -15,6 +15,11 @@ class LoginResponse implements LoginResponseContract
     public function toResponse($request): RedirectResponse | Redirector
     {
     //    return redirect(Filament::getUrl()) ;
+
+    if(auth()->user()->hasRole(['superadmin'])){
+       
+        return  redirect(url('/admin'));
+    }
     return  redirect(filament()->getPanel('main')->getLoginUrl());
 
     

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('estimate_id')->constrained()->onDelete('cascade');
             $table->foreignId('item_id')->constrained()->onDelete('cascade');
-            $table->integer('total')->nullable();
+            $table->integer('quantity')->nullable();
             $table->timestamps();
         });
     }

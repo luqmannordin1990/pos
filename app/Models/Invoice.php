@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Item;
+use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,7 +21,8 @@ class Invoice extends Model
 
     public function items()
     {
-        return $this->belongsToMany(Item::class, 'item_invoice');
+        return $this->belongsToMany(Item::class, 'item_invoice')
+        ->withPivot('quantity');
     }
 
     public function payments()
@@ -31,5 +33,16 @@ class Invoice extends Model
     public function team()
     {
         return $this->belongsTo(Team::class);
+    }
+
+    public function recurring_invoices()
+    {
+        return $this->belongsTo(RecurringInvoice::class);
+    }
+
+    static function generate_invoice_number($tenant_id){
+
+        return Invoice::where('team_id', $tenant_id)->orderBy('id', 'desc')->first()?->id + 1;
+
     }
 }

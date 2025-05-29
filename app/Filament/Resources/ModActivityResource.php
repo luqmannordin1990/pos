@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Panel;
 use Z3d0X\FilamentLogger\Resources\ActivityResource;
 
 class ModActivityResource extends ActivityResource
@@ -14,4 +15,14 @@ class ModActivityResource extends ActivityResource
     {
         return 'Maintenance';
     }
+
+    public static function canViewAny(): bool
+    {
+          if(auth()->user()->hasRole('superadmin')){
+            return true;
+        }
+        return false;
+    }
+
+
 }

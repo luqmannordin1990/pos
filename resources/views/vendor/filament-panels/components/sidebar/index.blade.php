@@ -130,7 +130,7 @@
             
             @if(\Filament\Facades\Filament::getCurrentPanel()->getId() != 'guest')
             <li class="fi-sidebar-item">
-                <a href="{{ route('logout', ['team' => filament()->getTenant()->slug]) }}" wire:navigate=""
+                <a href="{{  route('logout', ['team' => filament()->getTenant()?->slug]) }}" wire:navigate=""
                     x-on:click="window.matchMedia(`(max-width: 1024px)`).matches &amp;&amp; $store.sidebar.close()"
                     x-data="{ tooltip: false }" x-effect="
                                         tooltip = $store.sidebar.isOpen

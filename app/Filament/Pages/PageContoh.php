@@ -2,11 +2,24 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Pages\Page;
-use Illuminate\Contracts\View\View;
+use App\Models\Invoice;
+use Livewire\Component;
 
-class PageContoh extends Page
+use Filament\Pages\Page;
+use Filament\Tables\Table;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\View\View;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Tables\Concerns\InteractsWithTable;
+
+class PageContoh extends Page implements HasForms, HasTable
 {
+    use InteractsWithTable;
+    use InteractsWithForms;
+
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
     protected static ?string $navigationLabel = 'Page Contoh';
     protected static ?string $slug = 'page-contoh/{pass?}';
@@ -31,6 +44,29 @@ class PageContoh extends Page
             ])
             ->with([
                 'passUserData' => auth()->user()->name,
+            ]);
+    }
+
+    public function table(Table $table): Table
+    {
+        $sub = DB::table('invoices')
+        ->select('*');
+        $sub = DB::table('users')->select('*');
+    
+     
+        return $table
+            ->query(Invoice::query()->fromSub($sub, 'invoices'))
+            ->columns([
+                TextColumn::make('id'),
+            ])
+            ->filters([
+                // ...
+            ])
+            ->actions([
+                // ...
+            ])
+            ->bulkActions([
+                // ...
             ]);
     }
 }

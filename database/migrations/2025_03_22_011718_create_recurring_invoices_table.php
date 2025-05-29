@@ -13,17 +13,19 @@ return new class extends Migration
     public function up(): void
     {
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        Schema::dropIfExists('invoices');
+        Schema::dropIfExists('recurring_invoices');
 
 
 
-        Schema::create('invoices', function (Blueprint $table) {
+        Schema::create('recurring_invoices', function (Blueprint $table) {
             $table->id();
             $table->foreignId('customer_id')->constrained('customers')->onDelete('cascade'); // Customer reference
-            $table->date('date'); // Invoice date
-            $table->date('due_date'); // Due date
-            $table->string('invoice_number')->unique(); // Unique invoice number
-            $table->decimal('discount', 10, 2)->default(0.00); // Total discount on the invoice
+            $table->date('start_date'); // Date when recurrence starts
+            $table->date('next_invoice_date')->nullable(); // End date (if applicable)
+            $table->string('invoice_number')->nullable(); // Unique recurring invoice number
+            $table->enum('frequency', ['daily','weekly', 'monthly', 'yearly'])->default('weekly'); // Recurrence frequency
+            $table->integer('limit_by')->nullable(); // Number of invoices to generate (null = unlimited)
+            $table->enum('status', ['active', 'on_hold', 'completed'])->default('active'); // Invoice status
             $table->text('notes')->nullable(); // Additional notes
             $table->foreignId('team_id')->constrained()->onDelete('cascade')->nullable();
             $table->softDeletes();
@@ -38,6 +40,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('invoices');
+        Schema::dropIfExists('recurring_invoices');
     }
 };

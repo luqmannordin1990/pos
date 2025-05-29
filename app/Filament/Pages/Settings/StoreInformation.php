@@ -33,7 +33,15 @@ class StoreInformation extends Page implements HasForms
     public function mount(): void
     {
         $team = Filament::getTenant();
-        $this->form->fill($team->getAttributes());
+        $this->form->fill($team?->getAttributes());
+    }
+
+    public static function canAccess(): bool
+    {
+          if(!auth()->user()->hasRole('superadmin')){
+            return true;
+        }
+        return false;
     }
 
     public function form(Form $form): Form

@@ -3,15 +3,19 @@
 namespace App\Filament\Resources;
 
 use Filament\Forms;
+use App\Models\Team;
 use App\Models\User;
 use Filament\Tables;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
+use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
+use Filament\Forms\Components\Tabs;
 use Illuminate\Support\Facades\Hash;
 use Filament\Support\Enums\ActionSize;
 use Illuminate\Database\Eloquent\Model;
@@ -30,10 +34,11 @@ class UserResource extends Resource
     // protected static ?string $navigationLabel = 'Maintenance';
     protected static ?string $navigationGroup = 'Maintenance';
     protected static ?int $navigationSort = 4;
+    
 
-    public static function shouldRegisterNavigation(): bool
+    public static function canViewAny(): bool
     {
-        if (auth()->user()->hasRole('admin')) {
+        if (auth()->user()->hasRole(['superadmin','admin'])) {
             return true;
         }
         return false;
@@ -43,82 +48,137 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make()
-                    ->schema([
-                        Forms\Components\Select::make('search_staff')
-                            ->suffixIcon('heroicon-m-magnifying-glass')
-                            ->options(function (Get $get) {
-                                $finduserlppsa = DB::connection("staffdb")
-                                    ->table("user_ns")
-                                    ->where('flag', 1)->get();
-                                $finduser = collect($finduserlppsa)->map(function ($item, $key) {
-                                    $item->display = str_replace('LPPSA', "", $item->lppsa_no);
-                                    $item->store = $item->name . '###' . $item->email . '###' . $item->username . '###' . $item->id;
-                                    return $item;
-                                })->pluck('display', 'store')->toArray();
-                                return $finduser;
-                            })
-                            ->live(onBlur: true)
-                            ->preload()
-                            ->searchable()
-                            ->label('LPPSA ID')
-                            ->dehydrated(false)
-                            ->afterStateUpdated(function (Set $set, Get $get, $state) {
-                                $finduser = explode('###', $get('search_staff'));
-                                if (isset($finduser[0])) {
+                Tabs::make('Tabs')
+                    ->tabs([
+                        Tabs\Tab::make('Account')
+                            ->schema([
+                                Forms\Components\Section::make()
+                                    ->schema([
+                                        Forms\Components\Hidden::make('id'),
+                                        Forms\Components\TextInput::make('name')
+                                            ->required(),
+                                        Forms\Components\TextInput::make('username')
+                                            ->required()
+                                            ->unique(ignoreRecord: true),
+                                        Forms\Components\TextInput::make('email')
+                                            ->email()
+                                            ->required()
+                                            ->unique(ignoreRecord: true)
+                                            ->maxLength(255),
+                                        \Filament\Forms\Components\TextInput::make('phone')
+                                            ->label('Phone Number')
+                                            ->required()
+                                            ->numeric()
+                                            ->minLength(10) // Adjust based on your country's phone number length
+                                            ->maxLength(15) // Prevent excessively long numbers
+                                            ->placeholder('Enter phone number: 0123456789'),
 
-                                    $set('name', $finduser[0]);
-                                    $set('email', $finduser[1]);
-                                    $set('username', $finduser[2]);
-                                    $set('id', $finduser[3]);
-                                }
-                            }),
 
-                    ])->columns('full')
-                    ->visible(fn($operation) =>  $operation == 'create'),
-                Forms\Components\Section::make()
-                    ->schema([
-                        Forms\Components\Hidden::make('id'),
-                        Forms\Components\TextInput::make('name')
-                            ->required()
-                            ->readonly(),
-                        Forms\Components\TextInput::make('email')
-                            ->email()
-                            ->required()
-                            ->unique(ignoreRecord: true)
-                            ->maxLength(255)
-                            ->readonly(),
-                        Forms\Components\TextInput::make('username')
-                            ->required()
-                            ->readonly(),
-                        // Forms\Components\DateTimePicker::make('email_verified_at')
-                        //     ->visible(false),
-                        // Forms\Components\TextInput::make('password')
-                        //     ->dehydrateStateUsing(fn(string $state): string => Hash::make($state))
-                        //     ->dehydrated(fn(?string $state): bool => filled($state))
-                        //     ->required(fn(string $operation): bool => $operation === 'create')
-                        //     ->password()
-                        //     ->confirmed()
-                        //     ->revealable()
-                        //     ->maxLength(255)
-                        //     ->rule(Password::default())
-                        //     ->visible(true),
-                        // Forms\Components\TextInput::make('password_confirmation')
-                        //     ->label('Confirm password')
-                        //     ->password()
-                        //     ->revealable()
-                        //     ->required(fn(string $operation): bool => $operation === 'create')
-                        //     ->visible(true),
-                        Forms\Components\CheckboxList::make('roles')
-                            ->required()
-                            ->relationship(name: 'roles', titleAttribute: 'name')
-                            ->saveRelationshipsUsing(function (Model $record, $state) {
-                                $newRole = Role::whereIn('id', $state)->get();
-                                $record->syncRoles([]);
-                                $record->assignRole($newRole);
-                            })
-                            ->columns(2),
-                    ])->columns(2),
+                                        \Filament\Forms\Components\TextInput::make('password')
+                                            ->label(__('filament-panels::pages/auth/edit-profile.form.password.label'))
+                                            ->password()
+                                            ->revealable(filament()->arePasswordsRevealable())
+                                            ->rule(Password::default())
+                                            ->autocomplete('new-password')
+                                            ->dehydrated(fn($state): bool => filled($state))
+                                            // ->dehydrateStateUsing(fn($state): string => Hash::make($state))
+                                            ->live(debounce: 500)
+                                            ->same('passwordConfirmation'),
+                                        \Filament\Forms\Components\TextInput::make('passwordConfirmation')
+                                            ->label(__('filament-panels::pages/auth/edit-profile.form.password_confirmation.label'))
+                                            ->password()
+                                            ->revealable(filament()->arePasswordsRevealable())
+                                            ->required()
+                                            ->visible(fn(Get $get): bool => filled($get('password')))
+                                            ->dehydrated(false),
+                                        Forms\Components\CheckboxList::make('roles')
+                                            ->required()
+                                            ->relationship(name: 'roles', titleAttribute: 'name')
+                                            ->saveRelationshipsUsing(function (Model $record, $state) {
+                                                $newRole = Role::whereIn('id', $state)->get();
+                                                $record->syncRoles([]);
+                                                $record->assignRole($newRole);
+                                            })
+                                            ->columns(2),
+                                    ])->columns(2),
+                            ]),
+                        Tabs\Tab::make('Store')
+                            ->schema([
+                                \Filament\Forms\Components\Section::make('')
+                                    ->id('team-profile')
+                                    ->schema([
+                                        Forms\Components\TextInput::make('storename')
+                                            ->label('Store Name')
+                                            ->live(onBlur: true)
+                                            ->afterStateUpdated(function (Get $get, Set $set, ?string $old, ?string $state) {
+                                              
+                                                if (($get('slug') ?? '') !== Str::slug($old)) {
+                                                    return;
+                                                }
+
+                                                $set('slug', Str::slug($state));
+                                            }),
+                                        Forms\Components\TextInput::make('slug')
+                                            ->live()
+                                            ->hint('Choose your URL address')
+                                            ->helperText(fn($get) => url('/') . '/' . filament()->getCurrentPanel()->getPath() . '/' . $get('slug'))
+                                            ->required()
+                                            ->unique(table: Team::class, ignorable: Filament::getTenant()),
+
+                                        Forms\Components\TextInput::make('unit_house_no')
+                                            ->label('Unit/House No')
+                                            ->maxLength(255)
+                                            ->nullable(),
+
+                                        Forms\Components\TextInput::make('address_1')
+                                            ->label('Address 1')
+                                            ->maxLength(255)
+                                            ->required(),
+
+                                        Forms\Components\TextInput::make('address_2')
+                                            ->label('Address 2')
+                                            ->maxLength(255)
+                                            ->nullable(),
+
+                                        Forms\Components\TextInput::make('city')
+                                            ->label('City')
+                                            ->maxLength(255)
+                                            ->required(),
+
+                                        Forms\Components\TextInput::make('postal_code')
+                                            ->label('Postal Code')
+                                            ->maxLength(10)
+                                            ->required(),
+
+                                        \Filament\Forms\Components\Select::make('state')
+                                            ->label('State')
+                                            ->options([
+                                                'Johor' => 'Johor',
+                                                'Kedah' => 'Kedah',
+                                                'Kelantan' => 'Kelantan',
+                                                'Melaka' => 'Melaka',
+                                                'Negeri Sembilan' => 'Negeri Sembilan',
+                                                'Pahang' => 'Pahang',
+                                                'Perak' => 'Perak',
+                                                'Perlis' => 'Perlis',
+                                                'Pulau Pinang' => 'Pulau Pinang',
+                                                'Sabah' => 'Sabah',
+                                                'Sarawak' => 'Sarawak',
+                                                'Selangor' => 'Selangor',
+                                                'Terengganu' => 'Terengganu',
+                                                'Wilayah Persekutuan Kuala Lumpur' => 'Wilayah Persekutuan Kuala Lumpur',
+                                                'Wilayah Persekutuan Labuan' => 'Wilayah Persekutuan Labuan',
+                                                'Wilayah Persekutuan Putrajaya' => 'Wilayah Persekutuan Putrajaya',
+                                            ])
+                                            ->searchable()
+                                            ->required(),
+                                    ])
+                                    ->columns(2)
+                            ]),
+
+                    ])
+
+
 
             ])->columns(1);
     }

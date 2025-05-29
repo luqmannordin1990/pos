@@ -16,6 +16,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('invoice_id')->constrained()->onDelete('cascade');
             $table->foreignId('item_id')->constrained()->onDelete('cascade');
+            $table->integer('quantity')->nullable();
             $table->timestamps();
         });
     }

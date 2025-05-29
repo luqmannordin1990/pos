@@ -33,6 +33,14 @@ class AccountInformation extends Page implements HasForms
         $this->form->fill(auth()->user()->toArray());
     }
 
+    public static function canAccess(): bool
+    {
+          if(!auth()->user()->hasRole('superadmin')){
+            return true;
+        }
+        return false;
+    }
+
     public function form(Form $form): Form
     {
         return $form

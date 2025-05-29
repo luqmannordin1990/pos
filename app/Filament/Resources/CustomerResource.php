@@ -20,14 +20,15 @@ use App\Filament\Imports\CustomerImporter;
 use App\Filament\Resources\CustomerResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\CustomerResource\RelationManagers;
+use App\Models\User;
 
 class CustomerResource extends Resource
 {
     protected static ?string $model = Customer::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?int $navigationSort = 3;
-    protected static ?string $navigationGroup = 'Database';
+    protected static ?int $navigationSort = 2;
+    // protected static ?string $navigationGroup = 'Database';
 
     public static function form(Form $form): Form
     {
@@ -37,6 +38,33 @@ class CustomerResource extends Resource
                     // ->description('Prevent abuse by limiting the number of requests per period')
                     ->schema([
                         // ...
+                        Select::make('user_id')
+                            ->label('User')
+                            ->options(function ($operation, $state) {
+
+                                return User::whereHas('team', function ($query) {
+                                    $query->where('team_id', filament()->getTenant()->id);
+                                })
+                                    ->where(function ($query) use ($operation, $state) {
+                                        if ($operation == 'edit') {
+                                            $query->whereNotIn('id', Customer::where('team_id', filament()->getTenant()->id)->pluck('user_id'))
+                                                ->orWhere('id', $state);
+                                        } else {
+                                            $query->whereNotIn('id', Customer::where('team_id', filament()->getTenant()->id)->pluck('user_id'));
+                                        }
+                                    })
+                                    ->pluck('name', 'id');
+                            })
+                            ->live()
+                            ->afterStateUpdated(function ($set, $state) {
+                                $user = User::find($state);
+                                $set('name', $user?->name);
+                                $set('email', $user?->email);
+                                $set('telephone_no', $user?->phone);
+                            })
+                            ->searchable()
+                            ->preload(),
+
                         TextInput::make('name')
                             ->label('Customer Name')
                             ->required()
@@ -92,7 +120,6 @@ class CustomerResource extends Resource
                             ->options([
                                 'Male' => 'Male',
                                 'Female' => 'Female',
-                                'Other' => 'Other',
                             ])
                             ->nullable(),
 
@@ -222,7 +249,26 @@ class CustomerResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\EditAction::make(),
+                    \STS\FilamentImpersonate\Tables\Actions\Impersonate::make()
+                        ->hidden(function ($record) {
+                            return !User::find($record->user_id);
+                        }),
+                    Tables\Actions\Action::make('Print PDF')
+                        ->label('Print PDF')
+                        ->color('primary')
+                        ->icon('heroicon-o-printer')
+                        ->url(fn($record) => route('print.invoice', $record->id))
+                        ->openUrlInNewTab(),
+
+                ])
+                    ->label('More actions')
+                    ->icon('heroicon-m-ellipsis-vertical')
+                    ->size(ActionSize::Small)
+                    ->color('primary')
+                    ->button()
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

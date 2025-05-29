@@ -23,22 +23,32 @@ class UserSeeder extends Seeder
         //
         $user = User::factory()->create([
             'id' => '10000',
-            'name' => 'admin',
-            'username' => 'admin',
-            'email' => 'admin@test.com',
-            'password' => Hash::make('U53r_4cc0un7'),
+            'name' => 'superadmin',
+            'username' => 'superadmin',
+            'email' => 'superadmin@test.com',
+            'password' => 'superadmin1234',
         ]);
         $user->assignRole(Role::where('name', 'superadmin')->first());
 
         $user = User::create([
             'phone' => '01137436150',
-            'name' => 'test',
-            'email' => 'test@test.com',
-            'password' => 'test1234',
+            'name' => 'admin',
+            'email' => 'admin@test.com',
+            'password' => 'admin1234',
         ]);
         $team = Team::first();
         $team->members()->syncWithoutDetaching([$user->id]);
         $user->assignRole(Role::where('name', 'admin')->first());
+
+         $user = User::create([
+            'phone' => '0112343212',
+            'name' => 'customer',
+            'email' => 'customer@test.com',
+            'password' => 'customer1234',
+        ]);
+        $team = Team::first();
+        $team->members()->syncWithoutDetaching([$user->id]);
+        $user->assignRole(Role::where('name', 'customer')->first());
 
         // $user = User::factory()->create([
         //     'id' => '10001',

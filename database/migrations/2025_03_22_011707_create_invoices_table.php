@@ -13,22 +13,20 @@ return new class extends Migration
     public function up(): void
     {
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        Schema::dropIfExists('recurring_invoices');
+        Schema::dropIfExists('invoices');
 
 
 
-        Schema::create('recurring_invoices', function (Blueprint $table) {
+        Schema::create('invoices', function (Blueprint $table) {
             $table->id();
             $table->foreignId('customer_id')->constrained('customers')->onDelete('cascade'); // Customer reference
-            $table->date('start_date'); // Date when recurrence starts
-            $table->date('end_date')->nullable(); // End date (if applicable)
-            $table->string('invoice_number')->unique(); // Unique recurring invoice number
-            $table->enum('frequency', ['weekly', 'monthly', 'yearly', 'custom'])->default('weekly'); // Recurrence frequency
-            $table->string('custom_cron')->nullable(); // Custom cron expression (if applicable)
-            $table->integer('limit')->nullable(); // Number of invoices to generate (null = unlimited)
-            $table->enum('status', ['active', 'on_hold', 'completed'])->default('active'); // Invoice status
+            $table->date('date'); // Invoice date
+            $table->date('due_date'); // Due date
+            $table->string('invoice_number')->nullable(); // Unique invoice number
+            $table->decimal('discount', 10, 2)->default(0.00); // Total discount on the invoice
             $table->text('notes')->nullable(); // Additional notes
             $table->foreignId('team_id')->constrained()->onDelete('cascade')->nullable();
+            $table->foreignId('recurring_invoice_id')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
@@ -41,6 +39,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('recurring_invoices');
+        Schema::dropIfExists('invoices');
     }
 };

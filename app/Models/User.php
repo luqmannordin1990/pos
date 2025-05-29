@@ -53,19 +53,26 @@ class User extends Authenticatable implements FilamentUser, HasTenants
         'ban' => 'boolean',
     ];
 
-    public function teams(): BelongsToMany
+    public function team(): BelongsToMany
     {
         return $this->belongsToMany(Team::class);
     }
 
+    // public function team()
+    // {
+    //     return $this->belongsTo(Team::class);
+    // }
+
+
     public function getTenants(Panel $panel): Collection
     {
-        return $this->teams;
+        return $this->team;
     }
 
     public function canAccessTenant(Model $tenant): bool
     {
-        return $this->teams()->whereKey($tenant)->exists();
+        return true;
+        return $this->team()->whereKey($tenant)->exists();
     }
 
     public function canAccessPanel(Panel $panel): bool

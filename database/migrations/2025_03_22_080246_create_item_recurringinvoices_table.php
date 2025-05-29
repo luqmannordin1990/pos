@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::dropIfExists('item_recurringinvoices');
         Schema::create('item_recurringinvoices', function (Blueprint $table) {
             $table->id();
             $table->foreignId('recurring_invoice_id')->constrained()->onDelete('cascade');
             $table->foreignId('item_id')->constrained()->onDelete('cascade');
+            $table->integer('quantity')->nullable();
             $table->timestamps();
         });
     }

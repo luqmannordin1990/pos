@@ -15,10 +15,10 @@ class UserPolicy
         //
     }
 
-    public function viewany(): Response
-    {
-        return in_array('admin', auth()->user()->roles->pluck('name')->toArray())
-                    ? Response::allow()
-                    : Response::deny('You do not own this post.');
-    }
+    // public function viewany(): Response
+    // {
+    //     return in_array('admin', auth()->user()->roles->pluck('name')->toArray())
+    //                 ? Response::allow()
+    //                 : Response::deny('You do not own this post.');
+    // }
 }

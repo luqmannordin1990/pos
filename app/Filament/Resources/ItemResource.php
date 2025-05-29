@@ -21,8 +21,8 @@ class ItemResource extends Resource
     protected static ?string $model = Item::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?int $navigationSort = 4;
-    protected static ?string $navigationGroup = 'Database';
+    protected static ?int $navigationSort = 3;
+    // protected static ?string $navigationGroup = 'Database';
 
     public static function form(Form $form): Form
     {

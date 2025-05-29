@@ -19,6 +19,7 @@ class LogoutResponse implements Responsable
         // }
 
         // change this to your desired route
-        return redirect()->intended(url('/guest/login'));
+        return redirect()->intended(filament()->getLoginUrl());
+        // return redirect()->intended(url('/guest/login'));
     }
 }

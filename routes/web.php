@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PdfController;
 use Laravel\Socialite\Facades\Socialite;
 use Filament\Http\Responses\Auth\Contracts\LogoutResponse;
 
@@ -21,8 +22,7 @@ use Filament\Http\Responses\Auth\Contracts\LogoutResponse;
 */
 
 Route::get('/', function () {
-    // return view('welcome');
-    return redirect(url('/guest'));
+    return redirect(url('/main/login'));
 });
 
 Route::get('/login', function () {
@@ -36,10 +36,13 @@ Route::match(['get', 'post'], '/logout', function (Request $request) {
     $request->session()->invalidate();
     $request->session()->regenerateToken();
     // return redirect(url(request()->input('panel') . '/login'));
+
     if (request()->input('team')) {
-        return redirect()->intended(url("/guest/login?team=" . request()->input('team')));
+        // return redirect()->intended(url("/guest/login?team=" . request()->input('team')));
+        return redirect()->intended(url("/main/login?team=" . request()->input('team')));
     }
-    return redirect(url('guest/login'));
+
+    return redirect(filament()->getLoginUrl());
 })->name('logout');
 
 
@@ -89,3 +92,7 @@ Route::get('/auth/github/callback', function () {
 
     return redirect()->intended(Filament::getUrl());
 })->name('auth.github.callback');
+
+
+Route::get('/print-invoice/{id}', [PdfController::class, 'invoice'])
+    ->name('print.invoice');

@@ -66,39 +66,74 @@ class EstimateResource extends Resource
                             ->live()
                             ->headers([
                                 Header::make('name')->width('150px'),
+                                Header::make('quantity')->width('150px'),
                                 Header::make('price')->width('150px'),
-                                Header::make('total')->width('150px'),
+                                Header::make('amount')->width('150px'),
                             ])
                             ->schema([
                                 \Filament\Forms\Components\Select::make('id')
                                     ->options(Item::where('team_id', Filament::getTenant()->id)
                                         ->pluck('name', 'id'))
+                                    ->searchable()
                                     ->required()
-                                    ->afterStateUpdated(fn($set, $state) => $set('price', Item::find($state)->price)),
+                                    ->afterStateUpdated(function($set, $get, $state){
+                                        self::calculate_total($set, $get); 
+                                    }),
+                                \Filament\Forms\Components\TextInput::make('pivot.quantity')
+                                    ->integer()  // The input should be an integer.
+                                    ->required()
+                                    ->afterStateUpdated(function($set, $get, $state){
+                                        self::calculate_total($set, $get);
+                                    
+                                    }),
                                 \Filament\Forms\Components\TextInput::make('price')
                                     ->readonly()
+                                    ->dehydrated(false)
                                     ->required(),
-                                \Filament\Forms\Components\TextInput::make('pivot.total')
+                                \Filament\Forms\Components\TextInput::make('amount')
+                                    ->readonly()
+                                    ->dehydrated(false)
                                     ->required(),
+
                             ])
                             ->addActionAlignment(Alignment::Start)
                             ->columnSpan('full'),
                         \Filament\Forms\Components\Placeholder::make('footer')
                             ->hiddenLabel()
-                            ->content(fn($record, $get) => dd($get('item_estimate')))
                             ->content(function ($record, $get) {
                                 $html = '';
-                                $total_price = 0;
+                                $sub_total = 0;
                                 foreach ($get('item_estimate') as $key => $value) {
-                                    $total_price += $value['pivot']['total'] * $value['price'];
+                                    $sub_total += (float)$value['pivot']['quantity'] * $value['price'];
                                 }
-                                $html .= Blade::render('<div>Total: ' . $total_price . '</div>');
+                                $html .= Blade::render('
+                                    <div class="flex flex-col justify-center items-end bg-gray-100 rounded">
+                                            <div class="w-1/3  flex justify-between p-2">
+                                                    <span class="font-bold">Sub Total</span>
+                                                    <span class="font-bold">' . number_format($sub_total,'2','.','') . '</span>
+                                            </div>
+                                            <div class="w-1/3  flex justify-between p-2">
+                                                    <span class="font-bold text-lg">Total</span>
+                                                    <span class="font-bold text-lg">' . number_format($sub_total,'2','.','')  . '</span>
+                                            </div>
+
+                                    </div>
+
+                                ');
                                 return new HtmlString($html);
                             })
+                            ->columnSpan('full'),
                         // ->content(fn($record, $get) => new HtmlString(Blade::render('<div>Hello, {{ auth()->user()->name }}!</div>')))
                     ])
                     ->columns(2)
             ]);
+    }
+
+    static function  calculate_total($set, $get){
+        $price = Item::find($get('id'))?->price ?? 0;
+        $amount = (float)$price * (float)$get('pivot.quantity');
+        $set('price', $price);
+        $set('amount', $amount);
     }
 
     public static function table(Table $table): Table
@@ -134,6 +169,8 @@ class EstimateResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->action(fn($record) => $record->delete()),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -28,7 +28,13 @@ class EditEstimate extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $data['item_estimate'] = $this->getRecord()->items->toArray();
+        $data['item_estimate'] = $this->getRecord()->items->map(
+            function ($item) {
+                $item->amount = number_format($item->pivot->quantity * $item->price, 2, '.', '');
+                return $item ;
+            }
+        )->toArray();
+        
         return $data;
     }
 
@@ -37,9 +43,10 @@ class EditEstimate extends EditRecord
         $syncData = [];
         foreach ($data['item_estimate'] as $item) {
             $syncData[$item['id']] = [
-                'total' => $item['pivot']['total'],
+                'quantity' => $item['pivot']['quantity']
             ];
         }
+        // dd($syncData);
         $record->items()->sync($syncData);
         unset($data['item_estimate']);
         $record->update($data);

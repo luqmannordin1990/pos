@@ -18,7 +18,9 @@ class ItemCategoryResource extends Resource
     protected static ?string $model = ItemCategory::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Database';
+    // protected static ?string $navigationGroup = 'Database';
+    protected static ?string $navigationLabel = 'Category Items';
+
     protected static ?string $modelLabel = 'Category';
     protected static ?string $pluralModelLabel = 'Categories';
     protected static ?int $navigationSort = 3;
@@ -60,7 +62,10 @@ class ItemCategoryResource extends Resource
                     Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
-            ]);
+            ])
+             ->recordUrl(null)
+            ->recordAction(null)
+            ->defaultSort('updated_at', 'desc');
     }
 
     public static function getRelations(): array

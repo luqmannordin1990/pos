@@ -19,6 +19,11 @@ class CreateEstimate extends CreateRecord
         return $resource::getUrl('index');
     }
 
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        return $data;
+    }
+
     protected function handleRecordCreation(array $data): Model
     {
         $record = new ($this->getModel())($data);
@@ -45,7 +50,16 @@ class CreateEstimate extends CreateRecord
      
         unset($record->item_estimate);
         $temp2 = $relationship->save($record);
-        $temp2->items()->sync(array_column($temp['item_estimate'], 'id') );
+
+        $syncData = [];
+        foreach ($temp['item_estimate'] as $item) {
+            $syncData[$item['id']] = [
+                'quantity' => $item['pivot']['quantity']
+            ];
+        }
+
+       
+        $temp2->items()->sync($syncData);
         return $temp2;
     }
 
