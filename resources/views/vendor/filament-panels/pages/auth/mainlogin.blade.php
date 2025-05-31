@@ -29,7 +29,7 @@
             section {
                 position: relative;
                 max-width: 400px;
-                background-color: transparent;
+                background-color: #00000040;
                 border: 2px solid rgba(255, 255, 255, 0.5);
                 border-radius: 20px;
                 backdrop-filter: blur(4px);
