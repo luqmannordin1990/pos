@@ -109,12 +109,12 @@ class EstimateResource extends Resource
                                 $html .= Blade::render('
                                     <div class="flex flex-col justify-center items-end bg-gray-100 rounded">
                                             <div class="w-1/3  flex justify-between p-2">
-                                                    <span class="font-bold">Sub Total</span>
-                                                    <span class="font-bold">' . number_format($sub_total,'2','.','') . '</span>
+                                                    <span class="font-bold dark:text-black">Sub Total</span>
+                                                    <span class="font-bold dark:text-black">' . number_format($sub_total,'2','.','') . '</span>
                                             </div>
                                             <div class="w-1/3  flex justify-between p-2">
-                                                    <span class="font-bold text-lg">Total</span>
-                                                    <span class="font-bold text-lg">' . number_format($sub_total,'2','.','')  . '</span>
+                                                    <span class="font-bold dark:text-black text-lg">Total</span>
+                                                    <span class="font-bold dark:text-black text-lg">' . number_format($sub_total,'2','.','')  . '</span>
                                             </div>
 
                                     </div>
